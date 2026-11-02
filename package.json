@@ -1,0 +1,14 @@
+{
+  "name": "filefit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Free, privacy-first image and PDF tools that run in your browser.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
