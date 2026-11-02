@@ -15,3 +15,15 @@
   .hero h1{overflow-wrap:break-word}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button,.tool-card,.dropzone{transition:none!important}}
+
+/* Improve text contrast against the site's pale surfaces (Lighthouse accessibility). */
+.eyebrow,.kicker{color:#3c604d}
+.hero-note{color:#435a4d}
+.tool-tag{color:#365a37}
+.dropzone p{color:#475e50}
+.dropzone small{color:#475f51}
+.small-privacy{color:#455b4b}
+.step-num{color:#3a6548}
+.callout .kicker{color:#365b43}
+.callout p{color:#405b47}
+.footer-layout>div>p,.copyright{color:#4d6254}
