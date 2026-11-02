@@ -158,7 +158,7 @@
     $('workspace-title').textContent = TOOL_INFO[key].title;
     $('workspace-desc').textContent = TOOL_INFO[key].desc;
     $('file-hint').textContent = TOOL_INFO[key].hint;
-    for (const item of grid.querySelectorAll('.tool-card')) {
+    for (const item of (grid?.querySelectorAll('.tool-card') || [])) {
       const selected = item.dataset.tool === key;
       item.classList.toggle('selected', selected);
       item.setAttribute('aria-pressed', selected ? 'true' : 'false');
@@ -181,7 +181,7 @@
     upload.value = '';
   }
 
-  for (const btn of grid.querySelectorAll('.tool-card')) btn.addEventListener('click', () => changeTool(btn.dataset.tool));
+  for (const btn of (grid?.querySelectorAll('.tool-card') || [])) btn.addEventListener('click', () => changeTool(btn.dataset.tool));
   dropzone.addEventListener('click', (event) => { if (event.target !== upload) upload.click(); });
   dropzone.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); upload.click(); } });
   upload.addEventListener('change', () => addFiles(upload.files));
@@ -424,7 +424,7 @@
   $('workspace-title').textContent = TOOL_INFO[currentTool].title;
   $('workspace-desc').textContent = TOOL_INFO[currentTool].desc;
   $('file-hint').textContent = TOOL_INFO[currentTool].hint;
-  for (const item of grid.querySelectorAll('.tool-card')) {
+  for (const item of (grid?.querySelectorAll('.tool-card') || [])) {
     const selected = item.dataset.tool === currentTool;
     item.classList.toggle('selected', selected);
     item.setAttribute('aria-pressed', selected ? 'true' : 'false');
