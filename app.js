@@ -295,9 +295,8 @@
   async function getPdfLib() {
     if (window.PDFLib?.PDFDocument) return window.PDFLib;
     if (!pdfLibraryPromise) {
-      pdfLibraryPromise = injectScript('https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js')
-        .catch(() => injectScript('https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js'))
-        .catch(() => { throw new Error('The free PDF library could not load. Check your internet connection and try again.'); });
+      pdfLibraryPromise = injectScript('/vendor/pdf-lib.min.js')
+        .catch(() => { throw new Error('The PDF library could not load. Refresh the page and try again.'); });
     }
     try { return await pdfLibraryPromise; } catch (error) { pdfLibraryPromise = null; throw error; }
   }
