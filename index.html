@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f1">
+  <meta name="description" content="Compress photos, resize signatures, convert images and manage PDFs online for free. No signup, no watermark, and your files stay on your device.">
+  <meta property="og:title" content="Filefit — Free image and PDF tools">
+  <meta property="og:description" content="Simple file tools. No login, no watermark, no file uploads.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <title>Filefit — Free Image & PDF Tools | No Login Required</title>
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="shell nav-shell">
+      <a class="brand" href="/" aria-label="Filefit home"><span class="brand-icon" aria-hidden="true">F<span class="brand-star">✳</span></span><span>filefit<span class="brand-dot">.</span></span></a>
+      <nav class="nav-links" aria-label="Main navigation"><a href="#tools">All tools</a><a href="#how-it-works">How it works</a><a href="#faq">FAQs</a></nav>
+      <span class="nav-tag"><span class="status-dot"></span>100% free</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero shell" aria-labelledby="main-title">
+      <div class="eyebrow"><span class="sparkle">✳</span> THE LITTLE FILE TOOLKIT THAT DOES A LOT</div>
+      <h1 id="main-title">Make your files <em>fit.</em><br>Not your day complicated.</h1>
+      <p class="hero-copy">Compress photos, resize signatures, convert images, and sort out PDFs. All in your browser, without an account.</p>
+      <div class="hero-actions"><a class="button button-dark" href="#tools">Explore free tools <span aria-hidden="true">↗</span></a><span class="hero-note">No login. No watermark. No uploads.</span></div>
+      <div class="trust-strip"><span>✓ Files stay on your device</span><span>✓ Made for everyday tasks</span><span>✓ Works on mobile & desktop</span></div>
+      <div class="hero-orbit orbit-one" aria-hidden="true">.PDF</div><div class="hero-orbit orbit-two" aria-hidden="true">.JPG</div>
+    </section>
+
+    <section class="tool-section shell" id="tools">
+      <div class="section-heading"><div><span class="kicker">THE TOOLBOX</span><h2>What do you need to do?</h2></div><p>Pick a tool. Drop a file. You're done.</p></div>
+      <div class="tool-grid" id="tool-grid">
+        <button class="tool-card selected" data-tool="compress" type="button"><span class="tool-icon olive">↘</span><span class="tool-tag">POPULAR</span><strong>Compress image</strong><span class="card-description">Get photos under 20 KB, 50 KB, 100 KB, or your own limit.</span><span class="card-arrow" aria-hidden="true">↗</span></button>
+        <button class="tool-card" data-tool="resize" type="button"><span class="tool-icon mint">⤢</span><strong>Photo & signature resizer</strong><span class="card-description">Resize for forms, profile photos, and online applications.</span><span class="card-arrow" aria-hidden="true">↗</span></button>
+        <button class="tool-card" data-tool="convert" type="button"><span class="tool-icon peach">⇄</span><strong>Convert image</strong><span class="card-description">Switch effortlessly between JPG, PNG, and WebP formats.</span><span class="card-arrow" aria-hidden="true">↗</span></button>
+        <button class="tool-card" data-tool="images-pdf" type="button"><span class="tool-icon sky">▤</span><strong>Images to PDF</strong><span class="card-description">Combine your images into a clean, shareable PDF.</span><span class="card-arrow" aria-hidden="true">↗</span></button>
+        <button class="tool-card" data-tool="merge" type="button"><span class="tool-icon lilac">⊞</span><strong>Merge PDFs</strong><span class="card-description">Bring several PDF files together in just one document.</span><span class="card-arrow" aria-hidden="true">↗</span></button>
+        <button class="tool-card" data-tool="split" type="button"><span class="tool-icon sand">✂</span><strong>Split PDF</strong><span class="card-description">Extract the pages you need from a large PDF.</span><span class="card-arrow" aria-hidden="true">↗</span></button>
+      </div>
+    </section>
+
+    <section class="workspace-section shell" id="workspace" aria-labelledby="workspace-title">
+      <div class="workspace-header"><div><span class="kicker">YOUR WORKSPACE</span><h2 id="workspace-title">Compress image</h2><p id="workspace-desc">Reduce image file size to meet upload limits.</p></div><span class="local-pill"><span aria-hidden="true">◉</span> Private browser processing</span></div>
+      <div class="workspace-body">
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose files or drag them here">
+          <div class="upload-symbol" aria-hidden="true">↑</div>
+          <h3>Drop your files here</h3><p>or <span class="upload-link">browse from your device</span></p>
+          <small id="file-hint">JPG, PNG, or WebP images</small>
+          <input id="file-input" type="file" hidden accept="image/jpeg,image/png,image/webp">
+        </div>
+        <div id="selected-files" class="selected-files" hidden aria-live="polite"></div>
+        <div id="settings" class="settings" aria-label="Tool options"></div>
+        <div class="workspace-footer"><div class="small-privacy">🔒 Your files are processed here, not sent to our servers.</div><button id="process-button" class="button button-dark" type="button" disabled>Choose a file first <span aria-hidden="true">↗</span></button></div>
+        <div id="status" class="status-message" aria-live="polite" hidden></div>
+        <div id="result" class="result-box" aria-live="polite" hidden></div>
+      </div>
+    </section>
+
+    <section class="explain shell" id="how-it-works"><div class="section-heading"><div><span class="kicker">AS EASY AS 1–2–3</span><h2>It really is that simple.</h2></div></div><div class="steps"><div class="step"><span class="step-num">01 /</span><h3>Choose a tool</h3><p>Find exactly what you need from our six everyday helpers.</p></div><div class="step"><span class="step-num">02 /</span><h3>Add your file</h3><p>Drag and drop or pick it from your device. No account needed.</p></div><div class="step"><span class="step-num">03 /</span><h3>Download your result</h3><p>Take your finished file. Your originals stay on your device.</p></div></div></section>
+    <section class="callout shell"><div><span class="kicker">BUILT WITH STUDENTS & EVERYDAY LIFE IN MIND</span><h2>Form deadlines? We've got the file part.</h2><p>From government application photos to signature size limits and PDFs you need to submit — skip the software installation.</p><a class="button button-light" href="#tools">Find your tool <span aria-hidden="true">↗</span></a></div><div class="callout-art" aria-hidden="true"><span class="art-sheet">20 KB <span>✓</span></span><span class="art-sheet offset">PDF <span>✓</span></span></div></section>
+    <section class="faq shell" id="faq"><div class="section-heading"><div><span class="kicker">GOOD TO KNOW</span><h2>Questions, answered.</h2></div></div><details><summary>Is Filefit really free?</summary><p>Yes. The six tools are free to use without an account, subscription, or watermark.</p></details><details><summary>Does Filefit upload my files to a server?</summary><p>No. Files are processed locally by your browser. Some PDF functionality loads an open-source JavaScript library from a public CDN, but your file contents are not sent to the CDN.</p></details><details><summary>Can I make a photo exactly 20 KB?</summary><p>You can set a target of 20 KB or a custom limit. Image compression is best-effort: the result depends on the image's detail and format. We'll tell you the actual final size.</p></details><details><summary>Why won't my password-protected PDF work?</summary><p>Encrypted and some malformed PDFs may not be supported. Unlock the file in a trusted PDF editor first and ensure you have permission to modify it.</p></details></section>
+  </main>
+  <footer class="site-footer"><div class="shell footer-layout"><div><a class="brand" href="/" aria-label="Filefit home"><span class="brand-icon" aria-hidden="true">F<span class="brand-star">✳</span></span><span>filefit<span class="brand-dot">.</span></span></a><p>Less fiddling. More getting things done.</p></div><div class="footer-links"><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="#tools">Tools</a></div><p class="copyright">© <span id="year">2026</span> Filefit. Made for useful things.</p></div></footer>
+</body>
+</html>
