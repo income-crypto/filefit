@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6f7f1">
+<meta name="description" content="Photo or signature upload rejected by a form? Check allowed KB range, pixel dimensions, image format, crop and filename, then fix issues locally.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://file-fit.pages.dev/guides/photo-upload-rejected/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Filefit"><meta property="og:title" content="Photo Upload Rejected? Check KB, Pixels & Format | Filefit"><meta property="og:description" content="Photo or signature upload rejected by a form? Check allowed KB range, pixel dimensions, image format, crop and filename, then fix issues locally."><meta property="og:url" content="https://file-fit.pages.dev/guides/photo-upload-rejected/">
+<meta name="twitter:card" content="summary"><title>Photo Upload Rejected? Check KB, Pixels & Format | Filefit</title>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","name":"Photo Upload Rejected? Check KB, Pixels & Format | Filefit","url":"https://file-fit.pages.dev/guides/photo-upload-rejected/","description":"Photo or signature upload rejected by a form? Check allowed KB range, pixel dimensions, image format, crop and filename, then fix issues locally.","isPartOf":{"@type":"WebSite","name":"Filefit","url":"https://file-fit.pages.dev/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://file-fit.pages.dev/"},{"@type":"ListItem","position":2,"name":"Photo upload troubleshooting","item":"https://file-fit.pages.dev/guides/photo-upload-rejected/"}]}]}</script>
+</head><body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header class="site-header"><div class="shell nav-shell"><a class="brand" href="/" aria-label="Filefit homepage"><span class="brand-icon" aria-hidden="true">F<span class="brand-star">✳</span></span><span>filefit<span class="brand-dot">.</span></span></a><nav class="nav-links" aria-label="Main navigation"><a href="/#tools">All tools</a><a href="/#guides">Guides</a><a href="/about.html">About</a></nav><span class="nav-tag">100% free</span></div></header>
+<main id="main-content">
+<nav class="shell breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Photo upload troubleshooting</span></nav>
+<section class="shell landing-hero" aria-labelledby="guide-heading">
+<span class="eyebrow">✳ FILEFIT PRACTICAL GUIDE</span><h1 id="guide-heading">Photo upload rejected? Check these 8 things before trying again</h1>
+<p>A form may reject an image even if it looks sharp. Here is a practical way to diagnose size, dimensions and format without guessing.</p><div class="trust-strip"><span>✓ Free browser tools</span><span>✓ No file uploads to Filefit servers</span><span>✓ No registration</span></div>
+</section>
+<article class="shell seo-content" aria-label="Guide"><h2>First: copy the exact requirements from your form</h2>
+<p>Look for the portal's permitted file type (such as JPG), minimum and maximum KB size, pixel width and height, and any required aspect ratio or background. Requirements vary by application and can change. Use the form's current official instructions, not a size copied from an unrelated exam.</p>
+<h2>Eight checks that catch most upload problems</h2>
+<ol class="guide-steps">
+<li><strong>File format:</strong> The form might require JPG/JPEG only. Renaming a <code>.png</code> file to <code>.jpg</code> does not actually convert it. Use the <a href="/tools/image-converter/">image converter</a> to change its format properly.</li>
+<li><strong>Maximum KB:</strong> If the maximum is 50 KB, the saved output must be at or below that ceiling. Try the <a href="/tools/image-compressor/">image compressor</a>, then check the downloaded result.</li>
+<li><strong>Minimum KB:</strong> If the range is 20–50 KB, a 12 KB file may be rejected for being <em>too small</em>. Compression tools target a maximum, not a guaranteed minimum.</li>
+<li><strong>Dimensions in pixels:</strong> A 300 × 80 pixel image is not the same as an image that is 300 KB. If the form requires exact width and height, use the <a href="/tools/photo-signature-resizer/">photo and signature resizer</a> first.</li>
+<li><strong>Aspect ratio and crop:</strong> Cropping can cut off a signature stroke or part of a face. Fit-inside avoids cropping, though it can create additional space.</li>
+<li><strong>Actual downloaded file:</strong> Check the result rather than the original image. Conversion and compression can change the file's dimensions, format or size.</li>
+<li><strong>Filename:</strong> Use a short simple name such as <code>photo.jpg</code> and avoid special characters if the portal rejects filenames.</li>
+<li><strong>Other portal rules:</strong> Follow any rules for background, photo recency, orientation, face position or signature visibility. Filefit cannot verify these application-specific requirements.</li>
+</ol>
+<h2>KB and pixels are different measurements</h2>
+<p><strong>KB</strong> measures the saved file's size; <strong>pixels</strong> measure its dimensions. Both may matter for online applications. Use this table as a checklist, not as official requirements for any particular form.</p>
+<table><thead><tr><th>Example form instruction</th><th>What to check</th><th>Helpful Filefit tool</th></tr></thead><tbody>
+<tr><td>Photo under 50 KB</td><td>Downloaded file size must not exceed 50 KB</td><td><a href="/tools/image-compressor/">Compressor</a></td></tr>
+<tr><td>Signature 300 × 80 px</td><td>Width 300 pixels and height 80 pixels</td><td><a href="/tools/photo-signature-resizer/">Resizer</a></td></tr>
+<tr><td>JPG only</td><td>Actual JPEG file format, not just the extension</td><td><a href="/tools/image-converter/">Converter</a></td></tr>
+<tr><td>Between 20 KB and 50 KB</td><td>Both lower and upper KB bounds</td><td>Check the file size after processing</td></tr>
+</tbody></table>
+<h2>A safer workflow when your form requires pixels and KB</h2>
+<ol class="guide-steps">
+<li>Record the official pixel dimensions, KB range and accepted format.</li>
+<li>Resize the original image to the requested pixel dimensions.</li>
+<li>Convert it to the required format if necessary.</li>
+<li>Compress only if the file remains over the allowed maximum KB.</li>
+<li>Recheck the downloaded file's KB and pixels. A compressor may reduce dimensions, making it unsuitable for a form that requires exact pixels.</li>
+<li>Upload the checked result. If the form still rejects it, read the exact error before making another change.</li>
+</ol>
+<h2>Frequent questions</h2>
+<h3>Why is my image rejected even when it is below 50 KB?</h3>
+<p>It could be below a minimum KB requirement, the wrong pixel dimensions, the wrong file type, or a portal-specific photo rule. Check every stated requirement individually.</p>
+<h3>Can Filefit guarantee that my application accepts the photo?</h3>
+<p>No. Filefit processes images locally; only the application portal determines acceptance. Check the official instructions and the final output.</p>
+<h3>Does making a photo smaller in KB also change its width and height?</h3>
+<p>Sometimes. Filefit's compressor can reduce image dimensions while trying to meet an aggressive file-size target. If exact pixel dimensions are mandatory, verify the downloaded result.</p></article>
+<section class="shell seo-content" aria-label="Related guides and tools"><h2>Next steps</h2><p><a href="/tools/image-compressor/">Compress a photo to a KB limit</a> · <a href="/tools/photo-signature-resizer/">Resize a photo or signature in pixels</a> · <a href="/tools/image-converter/">Convert JPG, PNG or WebP</a></p><p>Need to combine several images instead? Read the <a href="/guides/combine-images-into-pdf/">image-to-PDF checklist</a>.</p></section>
+</main>
+<footer class="site-footer"><div class="shell footer-layout"><div><a class="brand" href="/" aria-label="Filefit homepage">filefit.</a><p>Everyday image and PDF tools, without a login.</p></div><div class="footer-links"><a href="/">All tools</a><a href="/about.html">About</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/contact.html">Contact</a></div><p class="copyright">© 2026 Filefit</p></div></footer>
+</body></html>
