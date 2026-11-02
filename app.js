@@ -11,7 +11,8 @@
     split: { title: 'Split PDF', desc: 'Keep the pages you choose from a PDF.', accept: 'application/pdf,.pdf', multiple: false, hint: 'PDF only • 1 file at a time', button: 'Extract pages' }
   };
 
-  let currentTool = 'compress';
+  const initialTool = document.body.dataset.initialTool;
+  let currentTool = TOOL_INFO[initialTool] ? initialTool : 'compress';
   let files = [];
   let resultUrl = null;
   let processing = false;
@@ -418,5 +419,14 @@
   window.addEventListener('beforeunload', revokeResult);
   renderSettings();
   renderFiles();
-  for (const item of grid.querySelectorAll('.tool-card')) item.setAttribute('aria-pressed', item.dataset.tool === currentTool ? 'true' : 'false');
+  upload.accept = TOOL_INFO[currentTool].accept;
+  upload.multiple = TOOL_INFO[currentTool].multiple;
+  $('workspace-title').textContent = TOOL_INFO[currentTool].title;
+  $('workspace-desc').textContent = TOOL_INFO[currentTool].desc;
+  $('file-hint').textContent = TOOL_INFO[currentTool].hint;
+  for (const item of grid.querySelectorAll('.tool-card')) {
+    const selected = item.dataset.tool === currentTool;
+    item.classList.toggle('selected', selected);
+    item.setAttribute('aria-pressed', selected ? 'true' : 'false');
+  }
 })();
