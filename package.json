@@ -4,11 +4,14 @@
   "private": true,
   "description": "Free, privacy-first image and PDF tools that run in your browser.",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "preview": "node scripts/serve.mjs"
+    "build": "node seo-build.mjs",
+    "preview": "node serve.mjs"
   },
   "engines": {
     "node": ">=18"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "pdf-lib": "1.17.1"
+  }
 }

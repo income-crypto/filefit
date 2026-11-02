@@ -20,8 +20,9 @@
 <script defer src="/app.js"></script>
 </head>
 <body data-initial-tool="compress">
+<a class="skip-link" href="#main-content">Skip to main content</a>
 <header class="site-header"><div class="shell nav-shell"><a class="brand" href="/" aria-label="Filefit homepage"><span class="brand-icon" aria-hidden="true">F<span class="brand-star">✳</span></span><span>filefit<span class="brand-dot">.</span></span></a><nav class="nav-links" aria-label="Main navigation"><a href="/#tools">All tools</a><a href="/#how-it-works">How it works</a><a href="/about.html">About</a></nav><span class="nav-tag"><span class="status-dot"></span>100% free</span></div></header>
-<main>
+<main id="main-content">
 <nav class="shell breadcrumbs" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Image Compressor</span></nav>
 <section class="shell landing-hero" aria-labelledby="landing-title">
 <span class="eyebrow">✳ FREE IMAGE COMPRESSION</span>
@@ -33,14 +34,14 @@
 <section class="workspace-section shell" id="workspace" aria-labelledby="workspace-title">
       <div class="workspace-header"><div><span class="kicker">YOUR WORKSPACE</span><h2 id="workspace-title">Compress image</h2><p id="workspace-desc">Reduce image file size to meet upload limits.</p></div><span class="local-pill"><span aria-hidden="true">◉</span> Private browser processing</span></div>
       <div class="workspace-body">
-        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose files or drag them here">
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Choose files or drag them here" aria-describedby="file-hint">
           <div class="upload-symbol" aria-hidden="true">↑</div>
           <h3>Drop your files here</h3><p>or <span class="upload-link">browse from your device</span></p>
           <small id="file-hint">JPG, PNG, or WebP images</small>
           <input id="file-input" type="file" hidden accept="image/jpeg,image/png,image/webp">
         </div>
         <div id="selected-files" class="selected-files" hidden aria-live="polite"></div>
-        <div id="settings" class="settings" aria-label="Tool options"></div>
+        <div id="settings" class="settings" role="group" aria-label="Tool options"></div>
         <div class="workspace-footer"><div class="small-privacy">🔒 Your files are processed here, not sent to our servers.</div><button id="process-button" class="button button-dark" type="button" disabled>Choose a file first <span aria-hidden="true">↗</span></button></div>
         <div id="status" class="status-message" aria-live="polite" hidden></div>
         <div id="result" class="result-box" aria-live="polite" hidden></div>

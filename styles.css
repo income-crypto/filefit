@@ -3,3 +3,15 @@
 
 /* SEO landing pages */
 .breadcrumbs{display:flex;gap:12px;align-items:center;padding-top:25px;font-size:13px;color:#64756b}.breadcrumbs a{color:var(--green)}.landing-hero{text-align:center;padding-top:60px;padding-bottom:45px}.landing-hero h1{font-size:clamp(36px,5vw,61px);line-height:1.12;letter-spacing:-2px;max-width:850px;margin:24px auto 20px}.landing-hero>p{max-width:760px;font-size:17px;line-height:1.8;color:var(--muted);margin:0 auto 26px}.landing-hero .trust-strip{margin-top:24px}.seo-content{max-width:900px;margin-bottom:80px}.seo-content h2,.tool-index h2{font-size:clamp(24px,3vw,34px);letter-spacing:-1px;margin:38px 0 18px}.seo-content p,.seo-content li,.tool-index p{color:var(--muted);line-height:1.85;font-size:15px}.guide-steps{padding-left:24px}.guide-steps li{margin-bottom:13px}.tool-index{margin-bottom:85px}.seo-link-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.seo-link-grid a{display:flex;flex-direction:column;gap:9px;text-decoration:none;border:1px solid var(--border);background:#fff;border-radius:14px;padding:19px;line-height:1.45}.seo-link-grid a:hover{border-color:#8eb69a;box-shadow:var(--shadow)}.seo-link-grid a strong{font-size:15px}.seo-link-grid a span{font-size:12px;color:var(--muted)}@media(max-width:750px){.seo-link-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.landing-hero{padding-top:45px}}@media(max-width:500px){.seo-link-grid{grid-template-columns:1fr}.landing-hero>p{font-size:15px}}
+
+/* Responsive navigation and accessible interaction improvements */
+.skip-link{position:absolute;left:16px;top:-100px;z-index:100;background:#fff;color:#153e32;padding:12px 18px;border:2px solid #153e32;border-radius:8px;font-weight:700}
+.skip-link:focus{top:10px}
+@media (max-width:600px){
+  .nav-shell{flex-wrap:wrap;row-gap:8px;padding-top:9px;padding-bottom:9px}
+  .nav-links{display:flex;order:3;flex-basis:100%;justify-content:space-between;flex-wrap:wrap;gap:8px 14px;border-top:1px solid var(--border);padding-top:10px;padding-bottom:2px}
+  .nav-links a{font-size:12px;padding:6px 0}
+  .nav-tag{margin-left:auto}
+  .hero h1{overflow-wrap:break-word}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button,.tool-card,.dropzone{transition:none!important}}
