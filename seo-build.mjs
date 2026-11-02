@@ -5,6 +5,7 @@ await mkdir('dist', { recursive: true });
 for (const file of files) await cp(file, 'dist/' + file);
 await cp('tools', 'dist/tools', { recursive: true });
 await cp('guides', 'dist/guides', { recursive: true });
+await cp('blog', 'dist/blog', { recursive: true });
 await mkdir('dist/vendor', { recursive: true });
 await cp('node_modules/pdf-lib/dist/pdf-lib.min.js', 'dist/vendor/pdf-lib.min.js');
 console.log('Filefit SEO site built: homepage, six tool pages, sitemap and local PDF library.');
