@@ -52,3 +52,6 @@
 .analytics-consent-actions button:focus-visible,.analytics-preferences-button:focus-visible{outline:3px solid #7fb798;outline-offset:2px}
 .analytics-preferences-button{font-size:12px;color:#365a43;background:none;border:0;text-decoration:underline;cursor:pointer;padding:0;min-height:24px;text-align:left}
 @media(max-width:600px){.analytics-consent-banner{padding:16px;gap:12px;bottom:10px;left:10px;right:10px}.analytics-consent-actions{width:100%}.analytics-consent-actions button{flex:1 1 130px}}
+
+/* Let footer links wrap when analytics preferences adds another item on narrow screens. */
+.site-footer .footer-links{flex-wrap:wrap;row-gap:10px}
