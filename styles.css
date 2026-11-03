@@ -34,3 +34,8 @@
 .seo-content th{background:#edf3e9;color:#20352c;font-weight:750}
 .seo-content tr:last-child td{border-bottom:0}
 .seo-content a{color:#1f5947;text-decoration:underline;text-underline-offset:2px}
+
+/* Keep the third-party Product Hunt badge below the fold and size-stable. */
+.producthunt-footer{display:flex;align-items:center;flex:0 0 auto}
+.producthunt-footer a{display:inline-block;line-height:0;border-radius:8px}
+.producthunt-footer img{display:block;max-width:100%;height:auto;aspect-ratio:250/54}
