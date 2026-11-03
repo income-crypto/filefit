@@ -16,8 +16,8 @@ async function addConsentScriptToHtml(dir) {
     if (item.isDirectory()) { await addConsentScriptToHtml(path); continue; }
     if (!item.name.endsWith('.html') || item.name.startsWith('google')) continue;
     const html = await readFile(path, 'utf8');
-    if (!/<\\/head>/i.test(html)) continue;
-    const updated = html.replace(/<\\/head>/i, '<script defer src="/analytics-consent.js"></script></head>');
+    if (!html.toLowerCase().includes('</head>')) continue;
+    const updated = html.replace(/<\x2fhead>/i, '<script defer src="/analytics-consent.js"></script></head>');
     await writeFile(path, updated);
   }
 }
