@@ -39,3 +39,19 @@
 .producthunt-footer{display:flex;align-items:center;flex:0 0 auto}
 .producthunt-footer a{display:inline-block;line-height:0;border-radius:8px}
 .producthunt-footer img{display:block;max-width:100%;height:auto;aspect-ratio:250/54}
+
+/* Optional GA4: accessible, low-profile consent controls. */
+.analytics-consent-banner{position:fixed;z-index:1000;left:16px;right:16px;bottom:16px;max-width:760px;margin:0 auto;padding:18px 20px;border:1px solid #bdcebf;border-radius:16px;box-shadow:0 10px 36px rgba(20,45,33,.19);background:#fff;color:#20352c;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.analytics-consent-copy{flex:1 1 310px;min-width:0}
+.analytics-consent-copy strong{font-size:15px}
+.analytics-consent-copy p{font-size:13px;line-height:1.55;margin:6px 0 0;color:#405548}
+.analytics-consent-copy a{color:#1f5947;text-decoration:underline}
+.analytics-consent-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.analytics-consent-actions button{appearance:none;padding:10px 14px;border-radius:9px;border:1px solid #365b47;background:#fff;color:#20352c;cursor:pointer;font-size:13px;font-weight:650;min-height:40px}
+.analytics-consent-actions .analytics-consent-allow{background:#1f5947;color:#fff}
+.analytics-consent-actions button:focus-visible,.analytics-preferences-button:focus-visible{outline:3px solid #7fb798;outline-offset:2px}
+.analytics-preferences-button{font-size:12px;color:#365a43;background:none;border:0;text-decoration:underline;cursor:pointer;padding:0;min-height:24px;text-align:left}
+@media(max-width:600px){.analytics-consent-banner{padding:16px;gap:12px;bottom:10px;left:10px;right:10px}.analytics-consent-actions{width:100%}.analytics-consent-actions button{flex:1 1 130px}}
+
+/* Let footer links wrap when analytics preferences adds another item on narrow screens. */
+.site-footer .footer-links{flex-wrap:wrap;row-gap:10px}
