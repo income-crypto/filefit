@@ -3,12 +3,12 @@
   'use strict';
 
   const TOOL_INFO = {
-    compress: { title: 'Compress image', desc: 'Reduce an image to a size that fits your upload requirements.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • 1 image at a time', button: 'Compress image' },
-    resize: { title: 'Photo & signature resizer', desc: 'Set exact pixel dimensions for forms, IDs, and signatures.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • 1 image at a time', button: 'Resize image' },
-    convert: { title: 'Convert image', desc: 'Change JPG, PNG, and WebP files into another format.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • 1 image at a time', button: 'Convert image' },
-    'images-pdf': { title: 'Images to PDF', desc: 'Combine your photos into one PDF, in the order you choose.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: true, hint: 'JPG, PNG, or WebP • add multiple images', button: 'Create PDF' },
-    merge: { title: 'Merge PDFs', desc: 'Combine multiple PDFs into one file without uploading them.', accept: 'application/pdf,.pdf', multiple: true, hint: 'PDF only • select two or more PDFs', button: 'Merge PDFs' },
-    split: { title: 'Split PDF', desc: 'Keep the pages you choose from a PDF.', accept: 'application/pdf,.pdf', multiple: false, hint: 'PDF only • 1 file at a time', button: 'Extract pages' }
+    compress: { title: 'Compress image', desc: 'Reduce an image to a size that fits your upload requirements.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Compress image' },
+    resize: { title: 'Photo & signature resizer', desc: 'Set exact pixel dimensions for forms, IDs, and signatures.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Resize image' },
+    convert: { title: 'Convert image', desc: 'Change JPG, PNG, and WebP files into another format.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Convert image' },
+    'images-pdf': { title: 'Images to PDF', desc: 'Combine your photos into one PDF, in the order you choose.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: true, hint: 'JPG, PNG, or WebP • up to 20 images, 50 MB each', button: 'Create PDF' },
+    merge: { title: 'Merge PDFs', desc: 'Combine multiple PDFs into one file without uploading them.', accept: 'application/pdf,.pdf', multiple: true, hint: 'PDF only • 2–20 files, 80 MB each', button: 'Merge PDFs' },
+    split: { title: 'Split PDF', desc: 'Keep the pages you choose from a PDF.', accept: 'application/pdf,.pdf', multiple: false, hint: 'PDF only • up to 80 MB', button: 'Extract pages' }
   };
 
   // Browser-only processing: bound memory-heavy inputs to avoid tab freezes.
