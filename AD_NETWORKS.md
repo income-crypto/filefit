@@ -3,7 +3,7 @@
 Created 2026-11-04. Live website: https://file-fit.pages.dev/.
 
 ## Infolinks integration details received (2026-11-04)
-The Filefit publisher welcome screen provided the following account-specific script values:
+The Filefit publisher welcome screen and support email provided the following account-specific script values:
 
 ```html
 <script type="text/javascript">var infolinks_pid = 3449243; var infolinks_wsid = 0;</script>
@@ -13,6 +13,11 @@ The Filefit publisher welcome screen provided the following account-specific scr
 These exact values are saved in `ads-config.json` for a later reviewed integration. **The loader is not installed or executed**, and publisher approval status is not independently verified from the screenshot alone. Infolinks' standard integration guidance says to insert the script before `</body>` after approval; it may automatically display ads based on enabled products.
 
 Before enabling: open the Infolinks Publisher Center and confirm the site is approved under Websites/Sites and review **Customize / Products**. Disable intrusive overlays, popunders, forced redirects, auto-interstitials or notification formats; assess privacy and ad-consent requirements. Restrict future script placement to content-rich guides initially, not file upload/download pages. Confirm ads do not conflict with AdSense publisher rules while Google's site review is pending. Verify no ad cookies/network requests before applicable consent. Any activation requires a separate audited code change and testing.
+
+## Domain correction and verification stage — 2026-11-04
+The owner corrected the Infolinks application website to `https://file-fit.pages.dev/`. The support email requested its publisher script before closing `</body>` for ownership validation. Filefit's homepage now contains the exact code **inside an inert HTML `<template>`**, which is visible in page source but does not execute automatically. A local `infolinks-integration.js` script exposes **Advertising preferences** in the homepage footer, permitting visitors to explicitly opt in to loading the external Infolinks script. Default behavior makes no Infolinks requests, and AdSense remains disabled. The provider may require a different active verification method; this implementation does not guarantee approval or automated script detection. Its script loader may trigger ads after approval only for users who consented.
+
+The owner should reply to Infolinks with the corrected URL and explain the consent-gated integration. If Infolinks cannot verify an opt-in integration, get clarification from support before enabling site-wide script loading; any active change needs an advertising-consent/CMP assessment.
 
 ## Current status
 - AdSense: **not connected / not verified / site not approved** (account status unknown).
