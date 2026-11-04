@@ -41,6 +41,10 @@ for (const file of staticPages) {
 const jsFiles = ['app.js', 'analytics-consent.js', 'infolinks-integration.js'];
 for (const file of jsFiles) new Function(await read('dist/' + file));
 const app = await read('dist/app.js');
+for (const event of ['filefit_tool_start', 'filefit_tool_complete', 'filefit_tool_error']) {
+  assert.ok(app.includes(event), 'Missing privacy-safe GA4 tool event: ' + event);
+}
+assert.ok(app.includes('tool_id: toolId'), 'Tool events must include only the public tool ID');
 for (const token of ['MAX_IMAGE_BYTES', 'MAX_PDF_BYTES', 'MAX_TOTAL_BYTES', 'MAX_FILE_COUNT', 'MAX_IMAGE_PIXELS']) {
   assert.ok(app.includes(token), 'Missing browser safety guard: ' + token);
 }
