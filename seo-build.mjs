@@ -32,4 +32,5 @@ async function addConsentScriptToHtml(dir) {
 await addConsentScriptToHtml('dist');
 console.log('Filefit build: analytics-consent script injected into HTML');
 await import('./ad-prep.mjs');
+await import('./qa-smoke.mjs');
 console.log('Filefit SEO site built: homepage, six tool pages, sitemap and local PDF library.');
