@@ -4,6 +4,8 @@ Project: https://file-fit.pages.dev/
 Production source: income-crypto/filefit (main)
 Deploy: Cloudflare Pages (build command: `npm run build`, output directory: `dist`)
 
+For the two-provider AdSense + Infolinks preparation, see [AD_NETWORKS.md](AD_NETWORKS.md) and [ads-config.json](ads-config.json). The provider enable flags deliberately fail the build until a separately reviewed integration exists.
+
 ## Current state (do not mark complete without Google account evidence)
 - [x] Public website, original tools, blog, About, Privacy, Terms and Contact pages
 - [x] HTTPS, sitemap, Google Search Console and Cloudflare Web Analytics
