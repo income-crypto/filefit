@@ -55,9 +55,9 @@ const infolinksVerification = [
   '<script type="text/javascript" src="https://resources.infolinks.com/js/infolinks_main.js"></script>',
   '</template>',
   '<script defer src="/infolinks-integration.js"></script>'
-].join('\\n');
+].join('\n');
 if (homeHtml.includes('id="filefit-infolinks-verification-code"')) throw new Error('Duplicate Infolinks code on home page');
 if (!homeHtml.includes('</body>')) throw new Error('Homepage has no closing body tag');
-await writeFile(homeFile, homeHtml.replace('</body>', infolinksVerification + '\\n</body>'));
+await writeFile(homeFile, homeHtml.replace('</body>', infolinksVerification + '\n</body>'));
 console.log('Infolinks ownership code present in inactive template; provider network disabled until explicit visitor consent.');
 console.log('Ad network groundwork: ' + count + ' hidden post-content slots, 0 ad providers loaded.');
