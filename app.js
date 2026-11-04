@@ -3,13 +3,21 @@
   'use strict';
 
   const TOOL_INFO = {
-    compress: { title: 'Compress image', desc: 'Reduce an image to a size that fits your upload requirements.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • 1 image at a time', button: 'Compress image' },
-    resize: { title: 'Photo & signature resizer', desc: 'Set exact pixel dimensions for forms, IDs, and signatures.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • 1 image at a time', button: 'Resize image' },
-    convert: { title: 'Convert image', desc: 'Change JPG, PNG, and WebP files into another format.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • 1 image at a time', button: 'Convert image' },
-    'images-pdf': { title: 'Images to PDF', desc: 'Combine your photos into one PDF, in the order you choose.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: true, hint: 'JPG, PNG, or WebP • add multiple images', button: 'Create PDF' },
-    merge: { title: 'Merge PDFs', desc: 'Combine multiple PDFs into one file without uploading them.', accept: 'application/pdf,.pdf', multiple: true, hint: 'PDF only • select two or more PDFs', button: 'Merge PDFs' },
-    split: { title: 'Split PDF', desc: 'Keep the pages you choose from a PDF.', accept: 'application/pdf,.pdf', multiple: false, hint: 'PDF only • 1 file at a time', button: 'Extract pages' }
+    compress: { title: 'Compress image', desc: 'Reduce an image to a size that fits your upload requirements.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Compress image' },
+    resize: { title: 'Photo & signature resizer', desc: 'Set exact pixel dimensions for forms, IDs, and signatures.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Resize image' },
+    convert: { title: 'Convert image', desc: 'Change JPG, PNG, and WebP files into another format.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Convert image' },
+    'images-pdf': { title: 'Images to PDF', desc: 'Combine your photos into one PDF, in the order you choose.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: true, hint: 'JPG, PNG, or WebP • up to 20 images, 50 MB each', button: 'Create PDF' },
+    merge: { title: 'Merge PDFs', desc: 'Combine multiple PDFs into one file without uploading them.', accept: 'application/pdf,.pdf', multiple: true, hint: 'PDF only • 2–20 files, 80 MB each', button: 'Merge PDFs' },
+    split: { title: 'Split PDF', desc: 'Keep the pages you choose from a PDF.', accept: 'application/pdf,.pdf', multiple: false, hint: 'PDF only • up to 80 MB', button: 'Extract pages' }
   };
+
+  // Browser-only processing: bound memory-heavy inputs to avoid tab freezes.
+  // These limits apply to files themselves; no file contents are transmitted.
+  const MAX_IMAGE_BYTES = 50 * 1024 * 1024;
+  const MAX_PDF_BYTES = 80 * 1024 * 1024;
+  const MAX_TOTAL_BYTES = 150 * 1024 * 1024;
+  const MAX_FILE_COUNT = 20;
+  const MAX_IMAGE_PIXELS = 40_000_000;
 
   const initialTool = document.body.dataset.initialTool;
   let currentTool = TOOL_INFO[initialTool] ? initialTool : 'compress';
@@ -150,6 +158,10 @@
   }
   function changeTool(key) {
     if (!TOOL_INFO[key]) return;
+    if (processing) {
+      setStatus('Finish the current conversion before switching tools.', 'error');
+      return;
+    }
     currentTool = key;
     files = [];
     upload.value = '';
@@ -170,12 +182,44 @@
     $('workspace').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function addFiles(list) {
+    if (processing) {
+      setStatus('Finish the current conversion before adding or replacing files.', 'error');
+      return;
+    }
     const incoming = [...list];
-    const valid = incoming.filter(file => currentTool === 'merge' || currentTool === 'split' ? isPdf(file) : isImage(file));
-    if (!valid.length) { setStatus(`Please choose ${currentTool === 'merge' || currentTool === 'split' ? 'PDF files' : 'JPG, PNG, or WebP images'}.`, 'error'); return; }
+    if (!incoming.length) return;
+    const isPdfTool = currentTool === 'merge' || currentTool === 'split';
+    const perFileLimit = isPdfTool ? MAX_PDF_BYTES : MAX_IMAGE_BYTES;
+    const valid = incoming.filter(file => isPdfTool ? isPdf(file) : isImage(file));
+    if (!valid.length) {
+      setStatus(`Please choose ${isPdfTool ? 'PDF files' : 'JPG, PNG, or WebP images'}.`, 'error');
+      upload.value = '';
+      return;
+    }
+    if (valid.some(file => file.size === 0)) {
+      setStatus('An empty file cannot be processed. Choose a nonempty file.', 'error');
+      upload.value = '';
+      return;
+    }
+    if (valid.some(file => file.size > perFileLimit)) {
+      setStatus(`For reliable processing in your browser, choose ${isPdfTool ? 'PDFs' : 'images'} up to ${formatBytes(perFileLimit)} each.`, 'error');
+      upload.value = '';
+      return;
+    }
+    const next = TOOL_INFO[currentTool].multiple ? [...files, ...valid] : [valid[0]];
+    if (next.length > MAX_FILE_COUNT) {
+      setStatus(`Select at most ${MAX_FILE_COUNT} files in one batch. Try smaller batches.`, 'error');
+      upload.value = '';
+      return;
+    }
+    if (next.reduce((total, file) => total + file.size, 0) > MAX_TOTAL_BYTES) {
+      setStatus(`Total input is too large. Select less than ${formatBytes(MAX_TOTAL_BYTES)} per batch.`, 'error');
+      upload.value = '';
+      return;
+    }
     if (valid.length !== incoming.length) setStatus('Some unsupported files were skipped.', 'error');
     else setStatus('');
-    files = TOOL_INFO[currentTool].multiple ? [...files, ...valid] : [valid[0]];
+    files = next;
     revokeResult();
     renderFiles();
     upload.value = '';
@@ -214,6 +258,9 @@
         image.src = url;
       });
       if (!image.naturalWidth || !image.naturalHeight) throw new Error('Invalid image dimensions.');
+      if (image.naturalWidth * image.naturalHeight > MAX_IMAGE_PIXELS) {
+        throw new Error('This image exceeds 40 megapixels. Resize it to a smaller image before using browser tools.');
+      }
       return image;
     } finally { URL.revokeObjectURL(url); }
   }
@@ -265,7 +312,7 @@
     const img = await loadImage(file);
     const width = validatePositive('width');
     const height = validatePositive('height');
-    if (width * height > 40_000_000) throw new Error('Output dimensions are too large for safe browser processing.');
+    if (width * height > MAX_IMAGE_PIXELS) throw new Error('Output dimensions are too large for safe browser processing.');
     const mime = $('resize-format').value;
     const canvas = drawImage(img, width, height, $('fit-mode').value, mime === 'image/png' || mime === 'image/webp');
     const blob = await blobFromCanvas(canvas, mime, 0.92);
@@ -275,8 +322,6 @@
   async function convertFile(file) {
     const img = await loadImage(file);
     const mime = $('convert-format').value;
-    const maxPixels = 40_000_000;
-    if (img.naturalWidth * img.naturalHeight > maxPixels) throw new Error('This image is too large for safe browser conversion.');
     const canvas = drawImage(img, img.naturalWidth, img.naturalHeight, 'cover', mime !== 'image/jpeg');
     const blob = await blobFromCanvas(canvas, mime, Number($('convert-quality').value));
     const ext = mime === 'image/jpeg' ? 'jpg' : mime.split('/')[1];
@@ -374,6 +419,14 @@
     const blob = new Blob([await output.save()], { type: 'application/pdf' });
     return { blob, name: `${withoutExt(file.name)}-extracted.pdf`, description: `${indices.length} of ${total} pages · ${formatBytes(blob.size)}` };
   }
+  // Tool activity events contain only the public tool identifier. Never pass
+  // filenames, file sizes, document contents or error messages to analytics.
+  // gtag is only created after GA4 has been enabled for this visitor.
+  function trackToolEvent(eventName, toolId) {
+    if (typeof window.gtag !== 'function') return;
+    try { window.gtag('event', eventName, { tool_id: toolId }); } catch (_) {}
+  }
+
   function showResult({blob, name, description, warning}) {
     revokeResult();
     resultUrl = URL.createObjectURL(blob);
@@ -397,9 +450,11 @@
   action.addEventListener('click', async () => {
     if (processing || action.disabled) return;
     processing = true;
+    const toolBeingProcessed = currentTool;
     updateButton();
     revokeResult();
     setStatus('Processing securely in your browser…');
+    trackToolEvent('filefit_tool_start', toolBeingProcessed);
     try {
       const snapshot = [...files];
       let output;
@@ -409,10 +464,14 @@
       else if (currentTool === 'images-pdf') output = await imagesToPdf(snapshot);
       else if (currentTool === 'merge') output = await mergePdfs(snapshot);
       else if (currentTool === 'split') output = await splitPdf(snapshot[0]);
-      if (output) showResult(output);
+      if (output) {
+        showResult(output);
+        trackToolEvent('filefit_tool_complete', toolBeingProcessed);
+      }
     } catch (error) {
       console.error('Filefit processing error:', error);
       setStatus(error?.message || 'Processing failed. Try another file.', 'error');
+      trackToolEvent('filefit_tool_error', toolBeingProcessed);
     } finally { processing = false; updateButton(); }
   });
   window.addEventListener('beforeunload', revokeResult);
