@@ -419,6 +419,14 @@
     const blob = new Blob([await output.save()], { type: 'application/pdf' });
     return { blob, name: `${withoutExt(file.name)}-extracted.pdf`, description: `${indices.length} of ${total} pages · ${formatBytes(blob.size)}` };
   }
+  // Tool activity events contain only the public tool identifier. Never pass
+  // filenames, file sizes, document contents or error messages to analytics.
+  // gtag is only created after GA4 has been enabled for this visitor.
+  function trackToolEvent(eventName, toolId) {
+    if (typeof window.gtag !== 'function') return;
+    try { window.gtag('event', eventName, { tool_id: toolId }); } catch (_) {}
+  }
+
   function showResult({blob, name, description, warning}) {
     revokeResult();
     resultUrl = URL.createObjectURL(blob);
@@ -442,9 +450,11 @@
   action.addEventListener('click', async () => {
     if (processing || action.disabled) return;
     processing = true;
+    const toolBeingProcessed = currentTool;
     updateButton();
     revokeResult();
     setStatus('Processing securely in your browser…');
+    trackToolEvent('filefit_tool_start', toolBeingProcessed);
     try {
       const snapshot = [...files];
       let output;
@@ -454,10 +464,14 @@
       else if (currentTool === 'images-pdf') output = await imagesToPdf(snapshot);
       else if (currentTool === 'merge') output = await mergePdfs(snapshot);
       else if (currentTool === 'split') output = await splitPdf(snapshot[0]);
-      if (output) showResult(output);
+      if (output) {
+        showResult(output);
+        trackToolEvent('filefit_tool_complete', toolBeingProcessed);
+      }
     } catch (error) {
       console.error('Filefit processing error:', error);
       setStatus(error?.message || 'Processing failed. Try another file.', 'error');
+      trackToolEvent('filefit_tool_error', toolBeingProcessed);
     } finally { processing = false; updateButton(); }
   });
   window.addEventListener('beforeunload', revokeResult);
