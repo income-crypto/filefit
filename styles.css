@@ -55,3 +55,7 @@
 
 /* Let footer links wrap when analytics preferences adds another item on narrow screens. */
 .site-footer .footer-links{flex-wrap:wrap;row-gap:10px}
+
+/* Disabled ad slots have zero footprint. Future units must be clearly labeled and kept away from file controls. */
+.filefit-ad-slot[hidden]{display:none!important}
+.filefit-ad-slot:not([hidden]){margin-block:32px 44px;text-align:center;min-height:100px}

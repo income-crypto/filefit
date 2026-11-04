@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "site": "https://file-fit.pages.dev/",
+  "adsense": {
+    "accountApproved": false,
+    "siteReady": false,
+    "enabled": false,
+    "publisherId": "",
+    "displayAdUnitId": ""
+  },
+  "infolinks": {
+    "siteApproved": false,
+    "enabled": false,
+    "approvedScriptProvided": false
+  },
+  "adsConsent": {
+    "privacyAndMessagingReviewed": false,
+    "certifiedCmpConfiguredWhereRequired": false
+  }
+}
