@@ -2,9 +2,21 @@
 
 Created 2026-11-04. Live website: https://file-fit.pages.dev/.
 
+## Infolinks integration details received (2026-11-04)
+The Filefit publisher welcome screen provided the following account-specific script values:
+
+```html
+<script type="text/javascript">var infolinks_pid = 3449243; var infolinks_wsid = 0;</script>
+<script type="text/javascript" src="https://resources.infolinks.com/js/infolinks_main.js"></script>
+```
+
+These exact values are saved in `ads-config.json` for a later reviewed integration. **The loader is not installed or executed**, and publisher approval status is not independently verified from the screenshot alone. Infolinks' standard integration guidance says to insert the script before `</body>` after approval; it may automatically display ads based on enabled products.
+
+Before enabling: open the Infolinks Publisher Center and confirm the site is approved under Websites/Sites and review **Customize / Products**. Disable intrusive overlays, popunders, forced redirects, auto-interstitials or notification formats; assess privacy and ad-consent requirements. Restrict future script placement to content-rich guides initially, not file upload/download pages. Confirm ads do not conflict with AdSense publisher rules while Google's site review is pending. Verify no ad cookies/network requests before applicable consent. Any activation requires a separate audited code change and testing.
+
 ## Current status
 - AdSense: **not connected / not verified / site not approved** (account status unknown).
-- Infolinks: **not connected / site not approved** (account status unknown).
+- Infolinks: **site-specific publisher code received**, but integration inactive and approval status not independently confirmed.
 - Both providers are **disabled** in `ads-config.json`.
 - No ads.txt records or ad-network scripts are deployed.
 - Each eligible homepage, tool page, blog and guide page contains an **invisible** post-content mount point generated during Cloudflare's build. It is inert, has no height and makes no network requests. This is not a functioning ad unit.
