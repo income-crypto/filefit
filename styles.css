@@ -59,3 +59,6 @@
 /* Disabled ad slots have zero footprint. Future units must be clearly labeled and kept away from file controls. */
 .filefit-ad-slot[hidden]{display:none!important}
 .filefit-ad-slot:not([hidden]){margin-block:32px 44px;text-align:center;min-height:100px}
+
+/* Ad-specific consent is opened only from the footer; keep it accessible on mobile. */
+.infolinks-consent-banner{z-index:1001}

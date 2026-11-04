@@ -44,4 +44,20 @@ async function prepare(dir) {
   }
 }
 await prepare('dist');
+// Expose the assigned site-specific verification code on the homepage as inert
+// template content. It is NOT executed until a visitor explicitly opts in using
+// the separate, first-party Advertising preferences control.
+const homeFile = 'dist/index.html';
+const homeHtml = await readFile(homeFile, 'utf8');
+const infolinksVerification = [
+  '<template id="filefit-infolinks-verification-code" data-purpose="provider-ownership-verification">',
+  '<script type="text/javascript">var infolinks_pid = 3449243; var infolinks_wsid = 0;</script>',
+  '<script type="text/javascript" src="https://resources.infolinks.com/js/infolinks_main.js"></script>',
+  '</template>',
+  '<script defer src="/infolinks-integration.js"></script>'
+].join('\n');
+if (homeHtml.includes('id="filefit-infolinks-verification-code"')) throw new Error('Duplicate Infolinks code on home page');
+if (!homeHtml.includes('</body>')) throw new Error('Homepage has no closing body tag');
+await writeFile(homeFile, homeHtml.replace('</body>', infolinksVerification + '\n</body>'));
+console.log('Infolinks ownership code present in inactive template; provider network disabled until explicit visitor consent.');
 console.log('Ad network groundwork: ' + count + ' hidden post-content slots, 0 ad providers loaded.');

@@ -14,7 +14,10 @@
     "approvedScriptProvided": true,
     "publisherId": 3449243,
     "websiteId": 0,
-    "loaderUrl": "https://resources.infolinks.com/js/infolinks_main.js"
+    "loaderUrl": "https://resources.infolinks.com/js/infolinks_main.js",
+    "correctSiteUrlConfirmedByOwner": true,
+    "verificationCodeEmbedded": true,
+    "verificationOptInOnly": true
   },
   "adsConsent": {
     "privacyAndMessagingReviewed": false,
