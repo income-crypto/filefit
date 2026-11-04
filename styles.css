@@ -62,3 +62,6 @@
 
 /* Ad-specific consent is opened only from the footer; keep it accessible on mobile. */
 .infolinks-consent-banner{z-index:1001}
+
+/* Disabled analytics choice when a browser explicitly requests no tracking. */
+.analytics-consent-actions button:disabled{opacity:.55;cursor:not-allowed}
