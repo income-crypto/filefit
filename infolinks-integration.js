@@ -47,7 +47,7 @@
     panel.innerHTML =
       '<div class="analytics-consent-copy">' +
       '<strong>Optional Infolinks advertising</strong>' +
-      '<p>Only if you choose Allow, Filefit will load an Infolinks script. It may use cookies and show sponsored content after approval. You can decline and continue using all tools. <a href="/privacy.html">Privacy details</a>.</p>' +
+      '<p>Only if you choose Allow, Filefit will load an Infolinks script. It may use cookies and show sponsored content after approval. You can decline and continue using all tools. <a href="/privacy">Privacy details</a>.</p>' +
       '</div>' +
       '<div class="analytics-consent-actions">' +
       '<button class="infolinks-decline" type="button">No thanks</button>' +

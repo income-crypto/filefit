@@ -25,7 +25,7 @@ assert.equal(config.adsense.enabled, false, 'AdSense must remain off until appro
 assert.equal(config.infolinks.enabled, false, 'Infolinks ads must remain off until approved');
 let verified = 0;
 for (const file of staticPages) {
-  const url = 'https://file-fit.pages.dev/' + file.replace(/^index\.html$/, '').replace(/\/index\.html$/, '/');
+  const url = 'https://file-fit.pages.dev/' + file.replace(/^index\.html$/, '').replace(/\/index\.html$/, '/').replace(/^(about|contact|privacy|terms)\.html$/, '$1');
   const html = await read('dist/' + file);
   assert.match(html, /<h1\b/i, 'Expected a main heading: ' + file);
   assert.match(html, /<main\b/i, 'Expected a main region: ' + file);
@@ -34,6 +34,12 @@ for (const file of staticPages) {
   assert.match(html, /<meta\s+name="google-adsense-account"\s+content="ca-pub-8456971543415872"/i, 'AdSense verification missing: ' + file);
   assert.equal((html.match(/src="\/analytics-consent\.js"/g) || []).length, 1, 'GA4 preferences injected exactly once: ' + file);
   assert.ok(sitemap.includes('<loc>' + url + '</loc>'), 'Missing sitemap URL: ' + url);
+  if (/^(about|contact|privacy|terms)\.html$/.test(file)) {
+    assert.ok(html.includes('<link rel="canonical" href="' + url + '">'), 'Canonical must match final URL: ' + file);
+  }
+  for (const slug of ['about', 'contact', 'privacy', 'terms']) {
+    assert.ok(!html.includes('href="/' + slug + '.html"'), 'Redirecting internal HTML link: ' + file);
+  }
   assert.ok(!html.includes('src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"'), 'Unexpected live AdSense loader');
   verified++;
 }

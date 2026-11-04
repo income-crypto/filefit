@@ -127,7 +127,7 @@
     banner.innerHTML =
       '<div class="analytics-consent-copy">' +
       '<strong>' + header + '</strong>' +
-      '<p>' + description + ' <a href="/privacy.html">Privacy details</a>.</p>' +
+      '<p>' + description + ' <a href="/privacy">Privacy details</a>.</p>' +
       '</div>' +
       '<div class="analytics-consent-actions">' +
       '<button type="button" class="analytics-consent-decline"></button>' +

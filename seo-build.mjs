@@ -17,7 +17,17 @@ async function addConsentScriptToHtml(dir) {
     const path = dir + '/' + item.name;
     if (item.isDirectory()) { await addConsentScriptToHtml(path); continue; }
     if (!item.name.endsWith('.html') || item.name.startsWith('google')) continue;
-    const html = await readFile(path, 'utf8');
+    let html = await readFile(path, 'utf8');
+    // Cloudflare Pages redirects these .html aliases to extensionless URLs.
+    // Use the final URLs for internal links and canonical metadata to avoid
+    // unnecessary 308 hops and mixed canonical hints to search engines.
+    for (const slug of ['about', 'contact', 'privacy', 'terms']) {
+      html = html.replaceAll(`href="/${slug}.html"`, `href="/${slug}"`);
+      html = html.replaceAll(
+        `href="https://file-fit.pages.dev/${slug}.html"`,
+        `href="https://file-fit.pages.dev/${slug}"`
+      );
+    }
     if (!html.toLowerCase().includes('</head>')) continue;
     // Keep the owner-supplied AdSense verification metadata on all published pages.
     // This metadata is inert: it does not load advertising or change consent.
