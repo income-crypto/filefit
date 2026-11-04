@@ -24,8 +24,8 @@ async function addConsentScriptToHtml(dir) {
     const adsenseTag = '<meta name="google-adsense-account" content="ca-pub-8456971543415872">';
     const verifiedHtml = html.includes('name="google-adsense-account"')
       ? html
-      : html.replace(/<\\x2fhead>/i, adsenseTag + '</head>');
-    const updated = verifiedHtml.replace(/<\\x2fhead>/i, '<script defer src="/analytics-consent.js"></script></head>');
+      : html.replace(/<[/]head>/i, adsenseTag + '</head>');
+    const updated = verifiedHtml.replace(/<[/]head>/i, '<script defer src="/analytics-consent.js"></script></head>');
     await writeFile(path, updated);
   }
 }
