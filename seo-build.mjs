@@ -19,7 +19,13 @@ async function addConsentScriptToHtml(dir) {
     if (!item.name.endsWith('.html') || item.name.startsWith('google')) continue;
     const html = await readFile(path, 'utf8');
     if (!html.toLowerCase().includes('</head>')) continue;
-    const updated = html.replace(/<\x2fhead>/i, '<script defer src="/analytics-consent.js"></script></head>');
+    // Keep the owner-supplied AdSense verification metadata on all published pages.
+    // This metadata is inert: it does not load advertising or change consent.
+    const adsenseTag = '<meta name="google-adsense-account" content="ca-pub-8456971543415872">';
+    const verifiedHtml = html.includes('name="google-adsense-account"')
+      ? html
+      : html.replace(/<[/]head>/i, adsenseTag + '</head>');
+    const updated = verifiedHtml.replace(/<[/]head>/i, '<script defer src="/analytics-consent.js"></script></head>');
     await writeFile(path, updated);
   }
 }
