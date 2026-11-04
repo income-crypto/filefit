@@ -11,7 +11,10 @@
   "infolinks": {
     "siteApproved": false,
     "enabled": false,
-    "approvedScriptProvided": false
+    "approvedScriptProvided": true,
+    "publisherId": 3449243,
+    "websiteId": 0,
+    "loaderUrl": "https://resources.infolinks.com/js/infolinks_main.js"
   },
   "adsConsent": {
     "privacyAndMessagingReviewed": false,
