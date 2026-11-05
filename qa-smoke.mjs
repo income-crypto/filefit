@@ -55,6 +55,12 @@ for (const token of ['MAX_IMAGE_BYTES', 'MAX_PDF_BYTES', 'MAX_TOTAL_BYTES', 'MAX
   assert.ok(app.includes(token), 'Missing browser safety guard: ' + token);
 }
 assert.ok((await stat('dist/vendor/pdf-lib.min.js')).size > 100_000, 'PDF library missing or incomplete');
+const home = await read('dist/index.html');
+assert.ok(!home.includes('infolinks-integration.js'), 'Rejected Infolinks loader must not be published');
+assert.ok(!home.includes('filefit-infolinks-verification-code'), 'Rejected Infolinks verification must not be published');
+assert.ok(app.includes('remove.disabled = processing'), 'File removal must be locked during processing');
+assert.ok(app.includes('button.disabled = processing'), 'File reordering must be locked during processing');
+assert.ok(app.includes('const bestEncoded'), 'Image compression must avoid unnecessary size increase');
 const headers = await read('dist/_headers');
 assert.ok(headers.includes('Content-Security-Policy'), 'Missing CSP');
 assert.ok(headers.includes('X-Content-Type-Options: nosniff'), 'Missing nosniff header');
