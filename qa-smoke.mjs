@@ -44,7 +44,7 @@ for (const file of staticPages) {
   verified++;
 }
 
-const jsFiles = ['app.js', 'analytics-consent.js', 'infolinks-integration.js'];
+const jsFiles = ['app.js', 'analytics-consent.js'];
 for (const file of jsFiles) new Function(await read('dist/' + file));
 const app = await read('dist/app.js');
 for (const event of ['filefit_tool_start', 'filefit_tool_complete', 'filefit_tool_error']) {
