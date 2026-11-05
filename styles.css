@@ -36,9 +36,9 @@
 .seo-content a{color:#1f5947;text-decoration:underline;text-underline-offset:2px}
 
 /* Keep the third-party Product Hunt badge below the fold and size-stable. */
-.producthunt-footer{display:flex;align-items:center;flex:0 0 auto}
-.producthunt-footer a{display:inline-block;line-height:0;border-radius:8px}
-.producthunt-footer img{display:block;max-width:100%;height:auto;aspect-ratio:250/54}
+.producthunt-hero{display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:22px}
+.producthunt-hero a{display:inline-block;line-height:0;border-radius:8px}
+.producthunt-hero img{display:block;max-width:100%;height:auto;aspect-ratio:250/54}
 
 /* Optional GA4: accessible, low-profile consent controls. */
 .analytics-consent-banner{position:fixed;z-index:1000;left:16px;right:16px;bottom:16px;max-width:760px;margin:0 auto;padding:18px 20px;border:1px solid #bdcebf;border-radius:16px;box-shadow:0 10px 36px rgba(20,45,33,.19);background:#fff;color:#20352c;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
