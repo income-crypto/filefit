@@ -36,7 +36,7 @@
 .seo-content a{color:#1f5947;text-decoration:underline;text-underline-offset:2px}
 
 /* Keep the third-party Product Hunt badge below the fold and size-stable. */
-.producthunt-hero{display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:22px}
+.producthunt-hero{display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin:0 0 18px}
 .producthunt-hero a{display:inline-block;line-height:0;border-radius:8px}
 .producthunt-hero img{display:block;max-width:100%;height:auto;aspect-ratio:250/54}
 
@@ -65,3 +65,8 @@
 
 /* Disabled analytics choice when a browser explicitly requests no tracking. */
 .analytics-consent-actions button:disabled{opacity:.55;cursor:not-allowed}
+
+/* Position Product Hunt badge in the marked top area above the hero eyebrow. */
+.hero{padding-top:18px}
+@media(max-width:850px){.hero{padding-top:22px}}
+@media(max-width:600px){.hero{padding-top:24px}}
