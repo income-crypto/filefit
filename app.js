@@ -129,9 +129,10 @@
           button.type = 'button';
           button.textContent = symbol;
           button.setAttribute('aria-label', `Move ${file.name} ${direction < 0 ? 'up' : 'down'}`);
-          button.disabled = index + direction < 0 || index + direction >= files.length;
+          button.disabled = processing || index + direction < 0 || index + direction >= files.length;
           button.className = 'file-control';
           button.addEventListener('click', () => {
+            if (processing) return;
             [files[index], files[index + direction]] = [files[index + direction], files[index]];
             renderFiles();
             revokeResult();
@@ -144,7 +145,8 @@
       remove.textContent = '×';
       remove.setAttribute('aria-label', `Remove ${file.name}`);
       remove.className = 'file-control';
-      remove.addEventListener('click', () => { files.splice(index, 1); renderFiles(); updateButton(); revokeResult(); });
+      remove.disabled = processing;
+      remove.addEventListener('click', () => { if (processing) return; files.splice(index, 1); renderFiles(); updateButton(); revokeResult(); });
       controls.append(remove);
       row.append(label, controls);
       fileList.append(row);
@@ -284,6 +286,10 @@
     const targetKb = $('target-kb').value === 'custom' ? validatePositive('custom-kb') : Number($('target-kb').value);
     const target = targetKb * 1024;
     const mime = $('format').value;
+    // Do not re-encode an already compliant image into a larger file.
+    if (file.type === mime && file.size <= target) {
+      return { blob: file, name: `${withoutExt(file.name)}-compressed.${mime === 'image/jpeg' ? 'jpg' : mime.split('/')[1]}`, description: `${formatBytes(file.size)} · Already within ${targetKb} KB target`, warning: '' };
+    }
     let maxDimension = Math.max(image.naturalWidth, image.naturalHeight);
     const maxCanvasDimension = Math.min(4500, maxDimension);
     let scale = maxCanvasDimension / maxDimension;
@@ -303,7 +309,9 @@
       if (width <= 60 || height <= 60) break;
       scale *= 0.75;
     }
-    const blob = bestUnder || bestOverall;
+    const bestEncoded = bestUnder || bestOverall;
+    // When the requested output format matches the original, avoid growing files.
+    const blob = file.type === mime && file.size < bestEncoded.size ? file : bestEncoded;
     const ext = mime === 'image/jpeg' ? 'jpg' : mime.split('/')[1];
     const success = blob.size <= target;
     return { blob, name: `${withoutExt(file.name)}-compressed.${ext}`, description: `${formatBytes(file.size)} → ${formatBytes(blob.size)} · ${success ? 'Within' : 'Above'} ${targetKb} KB target`, warning: success ? '' : 'The target could not be reached without further quality or size reduction. The smallest result found is shown.' };
@@ -450,6 +458,7 @@
   action.addEventListener('click', async () => {
     if (processing || action.disabled) return;
     processing = true;
+    renderFiles();
     const toolBeingProcessed = currentTool;
     updateButton();
     revokeResult();
@@ -472,7 +481,7 @@
       console.error('Filefit processing error:', error);
       setStatus(error?.message || 'Processing failed. Try another file.', 'error');
       trackToolEvent('filefit_tool_error', toolBeingProcessed);
-    } finally { processing = false; updateButton(); }
+    } finally { processing = false; renderFiles(); updateButton(); }
   });
   window.addEventListener('beforeunload', revokeResult);
   renderSettings();
