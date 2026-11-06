@@ -1,7 +1,7 @@
 // Cloudflare Pages Function: region-aware GA4 setup for Filefit.
-// Country classification is used only for consent UI selection.
+// Country classification is used only for optional analytics/ad consent selection.
 // No IP address, analytics ID, or visitor identity is logged or stored here.
-// IMPORTANT: Review the India allowlist ahead of DPDP consent provisions in May 2027.
+// IMPORTANT: Reassess India automatic ad loading before DPDP consent rules commence in May 2027.
 const automaticAnalyticsCountries = new Set(['IN']);
 
 export function onRequestGet({ request }) {
@@ -9,7 +9,9 @@ export function onRequestGet({ request }) {
   const eligible = automaticAnalyticsCountries.has(country);
 
   return new Response(JSON.stringify({
-    analyticsMode: eligible ? 'automatic' : 'opt-in'
+    analyticsMode: eligible ? 'automatic' : 'opt-in',
+    // Independent ad policy. Fail-closed in the browser if classification is unavailable.
+    adsterraMode: country === 'IN' ? 'automatic' : 'opt-in'
   }), {
     status: 200,
     headers: {
