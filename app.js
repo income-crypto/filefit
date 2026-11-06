@@ -156,7 +156,9 @@
   function updateButton() {
     const required = currentTool === 'merge' ? 2 : 1;
     action.disabled = processing || files.length < required;
-    action.innerHTML = `${files.length < required ? (required === 2 ? 'Choose at least 2 PDFs' : 'Choose a file first') : TOOL_INFO[currentTool].button} <span aria-hidden="true">↗</span>`;
+    const label = processing ? 'Processing…' : (files.length < required ? (required === 2 ? 'Choose at least 2 PDFs' : 'Choose a file first') : TOOL_INFO[currentTool].button);
+    action.innerHTML = `${label} <span aria-hidden="true">↗</span>`;
+    action.setAttribute('aria-busy', processing ? 'true' : 'false');
   }
   function changeTool(key) {
     if (!TOOL_INFO[key]) return;
