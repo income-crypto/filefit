@@ -22,7 +22,14 @@ for (const [name, settings] of [
   }
 }
 
+const unit = cfg.adsterra;
+if (unit?.enabled && (!unit.websiteApproved || !unit.optInOnly || !unit.contentPagesOnly ||
+  unit.format !== 'NativeBanner' || unit.siteId !== '6180788' ||
+  unit.scriptUrl !== 'https://bauval.org/21/59f82937b99fbf55529d074d93094c6b')) {
+  throw new Error('Adsterra native unit must be approved, opt-in, and content-only.');
+}
 let count = 0;
+let adsterraPages = 0;
 async function prepare(dir) {
   for (const item of await readdir(dir, { withFileTypes: true })) {
     const file = dir + '/' + item.name;
@@ -39,7 +46,14 @@ async function prepare(dir) {
     // action buttons or generated download links. It must remain invisible
     // and make no remote requests until a reviewed activation.
     const marker = '<section class="shell filefit-ad-slot" data-filefit-ad-slot="after-content" aria-label="Advertisement" hidden></section>\n';
-    await writeFile(file, html.replace('</main>', marker + '</main>'));
+    // The native unit is intentionally excluded from file-processing pages.
+    // The first-party loader requests no external advertising until opt-in.
+    const guideOrBlog = file === 'dist/blog/index.html' || file.startsWith('dist/guides/');
+    const loader = unit?.enabled && guideOrBlog
+      ? '<script defer src="/adsterra-native.js"></script>\n'
+      : '';
+    await writeFile(file, html.replace('</main>', marker + loader + '</main>'));
+    if (loader) adsterraPages++;
     count++;
   }
 }
@@ -47,4 +61,4 @@ await prepare('dist');
 // Infolinks rejected this pages.dev site. Never inject its loader, verification
 // script or advertising preference into the published site until a new
 // provider approval and compliance review have been completed.
-console.log('Ad network groundwork: ' + count + ' hidden post-content slots, 0 ad providers loaded; rejected Infolinks integration not published.');
+console.log('Ad groundwork: ' + count + ' post-content slots; ' + adsterraPages + ' content pages with consent-gated Adsterra loader; AdSense and rejected Infolinks remain off.');
