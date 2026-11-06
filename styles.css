@@ -76,3 +76,18 @@
 .download-button{overflow-wrap:anywhere;word-break:break-word;max-width:100%;white-space:normal;text-align:center}
 /* Meet WCAG AA normal-text contrast on light success and file-list backgrounds. */
 .file-size,.result-sub,.field .helper{color:#455e4d}
+
+/* Consent-gated Adsterra Native Banner, content pages only. */
+.filefit-ad-slot{margin:2rem auto 3rem;max-width:1080px}
+.filefit-ad-consent{border:1px solid #d4ded4;background:#f6f8f4;border-radius:18px;padding:1.25rem 1.5rem;color:#223528}
+.filefit-ad-consent strong{display:block;margin-bottom:.35rem}
+.filefit-ad-consent p{margin:.4rem 0 .8rem;line-height:1.6}
+.filefit-ad-consent a{color:#246e4a;text-decoration:underline}
+.filefit-ad-consent-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.85rem}
+.filefit-ad-button{font:inherit;cursor:pointer;border:1px solid #1b6f48;border-radius:9px;background:#176a44;color:#fff;padding:.65rem 1rem}
+.filefit-ad-button:focus-visible{outline:3px solid #67b98e;outline-offset:2px}
+.filefit-ad-secondary{background:transparent;color:#176a44}
+.filefit-ad-label{font-size:.75rem;color:#57645d;margin-bottom:.75rem;letter-spacing:.04em;text-transform:uppercase}
+.filefit-native-ad{max-width:100%;overflow:hidden;min-height:0}
+@media(max-width:600px){.filefit-ad-consent{padding:1rem}.filefit-ad-button{width:100%}}
+

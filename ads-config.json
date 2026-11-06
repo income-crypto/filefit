@@ -21,7 +21,18 @@
     "siteRejected": true
   },
   "adsConsent": {
-    "privacyAndMessagingReviewed": false,
+    "privacyAndMessagingReviewed": true,
     "certifiedCmpConfiguredWhereRequired": false
+  },
+  "adsterra": {
+    "websiteApproved": true,
+    "enabled": true,
+    "format": "NativeBanner",
+    "adUnit": "NativeBanner_1",
+    "siteId": "6180788",
+    "containerId": "container-59f82937b99fbf55529d074d93094c6b",
+    "scriptUrl": "https://bauval.org/21/59f82937b99fbf55529d074d93094c6b",
+    "optInOnly": true,
+    "contentPagesOnly": true
   }
 }
