@@ -22,7 +22,8 @@
   },
   "adsConsent": {
     "privacyAndMessagingReviewed": true,
-    "certifiedCmpConfiguredWhereRequired": false
+    "certifiedCmpConfiguredWhereRequired": false,
+    "regionBasedAdLoading": true
   },
   "adsterra": {
     "websiteApproved": true,
@@ -32,8 +33,13 @@
     "siteId": "6180788",
     "containerId": "container-59f82937b99fbf55529d074d93094c6b",
     "scriptUrl": "https://bauval.org/21/59f82937b99fbf55529d074d93094c6b",
-    "optInOnly": true,
+    "optInOnly": false,
     "contentPagesOnly": false,
-    "allPublicPages": true
+    "allPublicPages": true,
+    "regionAware": true,
+    "automaticCountries": [
+      "IN"
+    ],
+    "sandboxToolAds": true
   }
 }
