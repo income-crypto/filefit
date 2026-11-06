@@ -78,6 +78,17 @@ const css = await read('dist/styles.css');
 assert.ok(css.includes('.download-button{overflow-wrap:anywhere'), 'Long filenames must wrap on mobile');
 assert.ok(css.includes('.file-size,.result-sub,.field .helper{color:#455e4d}'), 'Small status text must use accessible contrast');
 
+// SVG must be accepted only by the converter, and checked before rasterization.
+const converterPage = await read('dist/tools/image-converter/index.html');
+assert.ok(converterPage.includes('image/svg+xml,.svg'), 'Converter upload input must allow SVG');
+assert.ok(converterPage.includes('SVG to PNG'), 'SVG support must be explained to visitors');
+assert.ok(app.includes("currentTool === 'convert' && isSvg(file)"), 'SVG must be limited to the converter');
+assert.ok(app.includes('safeSvgBlob(file)'), 'SVG must pass safe XML validation before loading');
+assert.ok(app.includes('DOMParser'), 'SVG must be parsed rather than injected into the DOM');
+assert.ok(app.includes('MAX_SVG_BYTES'), 'SVG byte-size guard is mandatory');
+assert.ok(app.includes("'foreignobject'"), 'Active SVG content must be rejected');
+assert.ok(app.includes("'script'"), 'SVG scripts must not be supported');
+assert.ok(app.includes("root.namespaceURI !== namespace"), 'SVG namespace validation is required');
 const headers = await read('dist/_headers');
 assert.ok(headers.includes('Content-Security-Policy'), 'Missing CSP');
 assert.ok(headers.includes('X-Content-Type-Options: nosniff'), 'Missing nosniff header');
