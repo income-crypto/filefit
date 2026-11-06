@@ -21,6 +21,18 @@ const staticPages = [
 
 const sitemap = await read('dist/sitemap.xml');
 const config = JSON.parse(await read('ads-config.json'));
+const authorizedSellers = await read('dist/ads.txt');
+assert.equal(authorizedSellers.trim(), 'google.com, pub-8456971543415872, DIRECT, f08c47fec0942fa0', 'Ads.txt must authorize the correct AdSense publisher');
+const robots = await read('dist/robots.txt');
+assert.match(robots, /^User-agent: \*/m, 'Robots rules missing');
+assert.ok(robots.includes('Sitemap: https://file-fit.pages.dev/sitemap.xml'), 'Robots sitemap hint missing');
+assert.match(sitemap, /^<\?xml version="1.0" encoding="UTF-8"\?>/, 'Sitemap should be UTF-8 XML');
+assert.ok(sitemap.includes('xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'), 'Sitemap namespace missing');
+const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
+assert.equal(urls.length, staticPages.length, 'Expected one sitemap URL per public page');
+assert.equal(new Set(urls).size, urls.length, 'Duplicate sitemap URL');
+assert.ok(urls.every(url => url.startsWith('https://file-fit.pages.dev/')), 'Incorrect sitemap hostname');
+
 assert.equal(config.adsense.enabled, false, 'AdSense must remain off until approved');
 assert.equal(config.infolinks.enabled, false, 'Infolinks ads must remain off until approved');
 let verified = 0;
@@ -61,6 +73,11 @@ assert.ok(!home.includes('filefit-infolinks-verification-code'), 'Rejected Infol
 assert.ok(app.includes('remove.disabled = processing'), 'File removal must be locked during processing');
 assert.ok(app.includes('button.disabled = processing'), 'File reordering must be locked during processing');
 assert.ok(app.includes('const bestEncoded'), 'Image compression must avoid unnecessary size increase');
+assert.ok(app.includes("action.setAttribute('aria-busy'"), 'Processing button needs accessible busy state');
+const css = await read('dist/styles.css');
+assert.ok(css.includes('.download-button{overflow-wrap:anywhere'), 'Long filenames must wrap on mobile');
+assert.ok(css.includes('.file-size,.result-sub,.field .helper{color:#455e4d}'), 'Small status text must use accessible contrast');
+
 const headers = await read('dist/_headers');
 assert.ok(headers.includes('Content-Security-Policy'), 'Missing CSP');
 assert.ok(headers.includes('X-Content-Type-Options: nosniff'), 'Missing nosniff header');
