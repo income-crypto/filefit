@@ -35,7 +35,8 @@
   }
   function showPrompt() {
     if (loaded) {
-      const box = element('div', 'filefit-ad-consent');
+      if (slot.querySelector('.filefit-ad-preferences')) return;
+      const box = element('div', 'filefit-ad-consent filefit-ad-preferences');
       box.append(
         element('strong', '', 'Advertising preferences'),
         element('p', '', 'Sponsored recommendations are enabled on guide pages. You can turn them off for future visits.')
@@ -44,7 +45,8 @@
       disable.type = 'button';
       disable.addEventListener('click', optOut);
       box.append(disable);
-      slot.replaceChildren(box);
+      // Keep the displayed ad intact while reviewing preferences.
+      slot.appendChild(box);
       slot.hidden = false;
       return;
     }
