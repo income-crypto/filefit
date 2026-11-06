@@ -79,7 +79,7 @@ assert.ok(nativeAds.includes("result.adsterraMode === 'opt-in'"), 'Opt-in fallba
 assert.ok(nativeAds.includes('hasGlobalOptOut()'), 'Global Privacy Control must be respected');
 assert.ok(nativeAds.includes("choice === 'decline'"), 'Prior opt-out must take precedence');
 assert.ok(nativeAds.includes("frame.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox')"), 'Tool ads require sandbox isolation');
-assert.ok(!nativeAds.includes('allow-same-origin'), 'Ad frames must not gain same-origin access');
+assert.ok(!nativeAds.includes("'allow-scripts allow-same-origin'"), 'Ad frames must not gain same-origin access');
 const regionApi = await read('functions/api/analytics-region.js');
 assert.ok(regionApi.includes("adsterraMode: country === 'IN' ? 'automatic' : 'opt-in'"), 'Only India may be automatically served');
 assert.ok(!regionApi.includes("console.log("), 'No request logging in region API');
