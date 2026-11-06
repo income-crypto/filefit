@@ -1,5 +1,5 @@
 import { cp, mkdir, rm, readdir, readFile, writeFile } from 'node:fs/promises';
-const files = ['index.html', '404.html', 'about.html', 'contact.html', 'privacy.html', 'terms.html', 'styles.css', 'app.js', 'analytics-consent.js', 'favicon.svg', 'robots.txt', 'ads.txt', '_headers', '_routes.json', 'sitemap.xml', 'google88474be45860b44d.html', '5f8a5f095675483641f756916c816e49.txt'];
+const files = ['index.html', '404.html', 'about.html', 'contact.html', 'privacy.html', 'terms.html', 'styles.css', 'app.js', 'analytics-consent.js', 'adsterra-native.js', 'favicon.svg', 'robots.txt', 'ads.txt', '_headers', '_routes.json', 'sitemap.xml', 'google88474be45860b44d.html', '5f8a5f095675483641f756916c816e49.txt'];
 console.log('Filefit build: preparing output directory');
 await rm('dist', { recursive: true, force: true });
 await mkdir('dist', { recursive: true });
