@@ -11,13 +11,14 @@
   "infolinks": {
     "siteApproved": false,
     "enabled": false,
-    "approvedScriptProvided": true,
+    "approvedScriptProvided": false,
     "publisherId": 3449243,
     "websiteId": 0,
     "loaderUrl": "https://resources.infolinks.com/js/infolinks_main.js",
     "correctSiteUrlConfirmedByOwner": true,
-    "verificationCodeEmbedded": true,
-    "verificationOptInOnly": true
+    "verificationCodeEmbedded": false,
+    "verificationOptInOnly": false,
+    "siteRejected": true
   },
   "adsConsent": {
     "privacyAndMessagingReviewed": false,
