@@ -54,8 +54,11 @@ for (const file of staticPages) {
   }
   assert.ok(!html.includes('src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"'), 'Unexpected live AdSense loader');
   const nativeLoaderCount = (html.match(/src="\/adsterra-native\.js"/g) || []).length;
-  const contentPage = file === 'blog/index.html' || file.startsWith('guides/');
-  assert.equal(nativeLoaderCount, contentPage ? 1 : 0, 'Adsterra loader must be content-only: ' + file);
+  assert.equal(nativeLoaderCount, 1, 'Each regular page must have exactly one opt-in Adsterra loader: ' + file);
+  assert.equal((html.match(/data-filefit-ad-slot="after-content"/g) || []).length, 1,
+    'Exactly one advertising space after main content: ' + file);
+  assert.ok(html.indexOf('data-filefit-ad-slot=') > html.indexOf('id="workspace"') || !file.startsWith('tools/'),
+    'Advertising must not be placed in the tool workspace: ' + file);
   assert.ok(!html.includes('bauval.org'), 'Never embed third-party advertising directly in HTML: ' + file);
   verified++;
 }
@@ -65,7 +68,8 @@ for (const file of jsFiles) new Function(await read('dist/' + file));
 assert.equal(config.adsterra.websiteApproved, true, 'Adsterra site must be approved');
 assert.equal(config.adsterra.enabled, true, 'Adsterra guide loader should be enabled');
 assert.equal(config.adsterra.optInOnly, true, 'Adsterra must always require opt-in');
-assert.equal(config.adsterra.contentPagesOnly, true, 'No ads on file processing pages');
+assert.equal(config.adsterra.contentPagesOnly, false, 'Tool-page advertising must be enabled');
+assert.equal(config.adsterra.allPublicPages, true, 'Adsterra must cover all regular site pages');
 const nativeAds = await read('dist/adsterra-native.js');
 assert.ok(nativeAds.includes("choice === 'allow'"), 'Opt-in gate missing');
 assert.ok(nativeAds.includes("script.src = scriptSrc"), 'Native ad script must only be injected on opt-in');
@@ -119,18 +123,26 @@ for (const file of staticPages) {
     '/' + file.replace(/\/index\.html$/, '/').replace(/^(about|contact|privacy|terms)\.html$/, '$1');
   const matches = policyFor(page);
   assert.equal(matches.length, 1, 'Exactly one CSP is required for ' + page);
-  const isContent = page.startsWith('/guides/') || page.startsWith('/blog/');
-  assert.equal(matches[0].policy.includes('https://bauval.org'), isContent,
-    'Adsterra host must be permitted only on content pages: ' + page);
+  assert.ok(matches[0].policy.includes('https://bauval.org'),
+    'Adsterra host must be permitted on every regular page: ' + page);
 }
 assert.equal(policyFor('/404.html').length, 1, '404 response should retain CSP');
+assert.ok(!policyFor('/404.html')[0].policy.includes('https://bauval.org'),
+  '404 error page must not allow ad scripts');
+assert.ok(!(await read('dist/404.html')).includes('/adsterra-native.js'),
+  '404 error page must not include native advertisements');
 assert.ok(!headers.match(/^\/\*\n  Content-Security-Policy:/m),
   'Wildcard CSP collides with guide-level CSP (Cloudflare concatenates duplicates)');
 
-const globalCsp = headers.split('/guides/*')[0];
-assert.ok(!globalCsp.includes('https://bauval.org'), 'Never relax the tool pages global CSP');
+assert.ok(!headers.match(/^\/\*\n  Content-Security-Policy:/m),
+  'A wildcard CSP conflicts with page-specific ad policies');
 const privacy = await read('dist/privacy.html');
 assert.ok(privacy.includes('Adsterra Native Banner'), 'Privacy must explain native advertisements');
+assert.ok(privacy.includes('third-party JavaScript'), 'Privacy must disclose tool-page third-party script risk');
+assert.ok(nativeAds.includes('filefit_adsterra_sitewide_choice_v1'),
+  'New site-wide consent must not reuse narrow guide-only consent');
+assert.ok(!nativeAds.includes('filefit_adsterra_native_choice_v1'),
+  'Older guide-only choice must not grant site-wide consent');
 assert.ok(headers.includes('X-Content-Type-Options: nosniff'), 'Missing nosniff header');
 const regionConfig = JSON.parse(await read('dist/_routes.json'));
 assert.deepEqual(regionConfig.include, ['/api/analytics-region'], 'Keep Pages Functions limited to the region endpoint');

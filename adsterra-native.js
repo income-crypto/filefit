@@ -1,11 +1,11 @@
-/* Filefit's opt-in, guide-only Adsterra Native Banner.
- * Never load third-party advertising until the visitor explicitly opts in.
- * Tool workspaces do not include this script. */
+/* Filefit's opt-in Adsterra Native Banner, on public pages.
+ * Third-party ad code is requested only after explicit visitor opt-in.
+ * Keep banners below page content, never near upload or download controls. */
 (() => {
   'use strict';
   const slot = document.querySelector('[data-filefit-ad-slot="after-content"]');
-  if (!slot || !(/^\/guides\/|^\/blog\/$/.test(location.pathname))) return;
-  const key = 'filefit_adsterra_native_choice_v1';
+  if (!slot) return;
+  const key = 'filefit_adsterra_sitewide_choice_v1';
   const unitId = 'container-59f82937b99fbf55529d074d93094c6b';
   const scriptSrc = 'https://bauval.org/21/59f82937b99fbf55529d074d93094c6b';
   let loaded = false;
@@ -39,7 +39,7 @@
       const box = element('div', 'filefit-ad-consent filefit-ad-preferences');
       box.append(
         element('strong', '', 'Advertising preferences'),
-        element('p', '', 'Sponsored recommendations are enabled on guide pages. You can turn them off for future visits.')
+        element('p', '', 'Sponsored recommendations are enabled on Filefit pages. You can turn them off for future visits.')
       );
       const disable = element('button', 'filefit-ad-button', 'Turn off sponsored content');
       disable.type = 'button';
@@ -53,7 +53,7 @@
     const box = element('div', 'filefit-ad-consent');
     box.append(
       element('strong', '', 'Optional sponsored recommendations'),
-      element('p', '', 'If you choose to show them, Adsterra will load third-party ads and may use cookies or similar technology. Your Filefit tools do not need advertising to work.')
+      element('p', '', 'If you choose to show them, Adsterra will load third-party advertising code that can access information on this page and may use cookies or similar technology. Do not enable it when working with sensitive files. Filefit tools work without ads.')
     );
     const link = document.createElement('a');
     link.href = '/privacy';

@@ -23,10 +23,10 @@ for (const [name, settings] of [
 }
 
 const unit = cfg.adsterra;
-if (unit?.enabled && (!unit.websiteApproved || !unit.optInOnly || !unit.contentPagesOnly ||
+if (unit?.enabled && (!unit.websiteApproved || !unit.optInOnly || !unit.allPublicPages || unit.contentPagesOnly ||
   unit.format !== 'NativeBanner' || unit.siteId !== '6180788' ||
   unit.scriptUrl !== 'https://bauval.org/21/59f82937b99fbf55529d074d93094c6b')) {
-  throw new Error('Adsterra native unit must be approved, opt-in, and content-only.');
+  throw new Error('Adsterra unit must be approved, opt-in, and scoped to public pages.');
 }
 let count = 0;
 let adsterraPages = 0;
@@ -35,8 +35,11 @@ async function prepare(dir) {
     const file = dir + '/' + item.name;
     if (item.isDirectory()) { await prepare(file); continue; }
     if (!item.name.endsWith('.html')) continue;
-    const eligible = file === 'dist/index.html' ||
-      file === 'dist/blog/index.html' ||
+    const regularPages = new Set([
+      'dist/index.html', 'dist/about.html', 'dist/contact.html',
+      'dist/privacy.html', 'dist/terms.html', 'dist/blog/index.html'
+    ]);
+    const eligible = regularPages.has(file) ||
       file.startsWith('dist/tools/') || file.startsWith('dist/guides/');
     if (!eligible) continue;
     const html = await readFile(file, 'utf8');
@@ -46,10 +49,9 @@ async function prepare(dir) {
     // action buttons or generated download links. It must remain invisible
     // and make no remote requests until a reviewed activation.
     const marker = '<section class="shell filefit-ad-slot" data-filefit-ad-slot="after-content" aria-label="Advertisement" hidden></section>\n';
-    // The native unit is intentionally excluded from file-processing pages.
-    // The first-party loader requests no external advertising until opt-in.
-    const guideOrBlog = file === 'dist/blog/index.html' || file.startsWith('dist/guides/');
-    const loader = unit?.enabled && guideOrBlog
+    // Every regular public page gets one post-content placement. Never load the
+    // third-party script without opt-in, and never show ads on the 404 page.
+    const loader = unit?.enabled
       ? '<script defer src="/adsterra-native.js"></script>\n'
       : '';
     await writeFile(file, html.replace('</main>', marker + loader + '</main>'));
@@ -61,4 +63,4 @@ await prepare('dist');
 // Infolinks rejected this pages.dev site. Never inject its loader, verification
 // script or advertising preference into the published site until a new
 // provider approval and compliance review have been completed.
-console.log('Ad groundwork: ' + count + ' post-content slots; ' + adsterraPages + ' content pages with consent-gated Adsterra loader; AdSense and rejected Infolinks remain off.');
+console.log('Ad groundwork: ' + count + ' post-content slots; ' + adsterraPages + ' public pages with consent-gated Adsterra loader; AdSense and rejected Infolinks remain off.');
