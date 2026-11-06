@@ -33,6 +33,7 @@
     "containerId": "container-59f82937b99fbf55529d074d93094c6b",
     "scriptUrl": "https://bauval.org/21/59f82937b99fbf55529d074d93094c6b",
     "optInOnly": true,
-    "contentPagesOnly": true
+    "contentPagesOnly": false,
+    "allPublicPages": true
   }
 }
