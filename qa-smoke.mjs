@@ -107,7 +107,7 @@ assert.ok(headers.includes('Content-Security-Policy'), 'Missing CSP');
 assert.ok(headers.includes('/guides/*') && headers.includes('/blog/*'), 'Content-only CSP must be present');
 assert.ok(headers.includes('https://bauval.org'), 'Native banner origin missing in content CSP');
 
-const policies = [...headers.matchAll(/^([/][^\n]+)\n  Content-Security-Policy: (.+)$/gm)]
+const policies = [...headers.matchAll(/^([/][^\n]*)\n  Content-Security-Policy: (.+)$/gm)]
   .map(([, path, policy]) => ({ path, policy }));
 const policyFor = page => policies.filter(rule =>
   rule.path.endsWith('*')
