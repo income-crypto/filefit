@@ -67,11 +67,22 @@ const jsFiles = ['app.js', 'analytics-consent.js', 'adsterra-native.js'];
 for (const file of jsFiles) new Function(await read('dist/' + file));
 assert.equal(config.adsterra.websiteApproved, true, 'Adsterra site must be approved');
 assert.equal(config.adsterra.enabled, true, 'Adsterra guide loader should be enabled');
-assert.equal(config.adsterra.optInOnly, true, 'Adsterra must always require opt-in');
+assert.equal(config.adsterra.regionAware, true, 'Automatic ads must remain region-gated');
+assert.deepEqual(config.adsterra.automaticCountries, ['IN'], 'Only India is in the automatic-ad allowlist');
+assert.equal(config.adsterra.sandboxToolAds, true, 'Third-party ads must be isolated from tool uploads');
 assert.equal(config.adsterra.contentPagesOnly, false, 'Tool-page advertising must be enabled');
 assert.equal(config.adsterra.allPublicPages, true, 'Adsterra must cover all regular site pages');
 const nativeAds = await read('dist/adsterra-native.js');
-assert.ok(nativeAds.includes("choice === 'allow'"), 'Opt-in gate missing');
+assert.ok(nativeAds.includes("choice === 'allow'"), 'Previously consented ads must be recognized');
+assert.ok(nativeAds.includes("result.adsterraMode === 'automatic'"), 'India auto-loading gate missing');
+assert.ok(nativeAds.includes("result.adsterraMode === 'opt-in'"), 'Opt-in fallback for other locations missing');
+assert.ok(nativeAds.includes('hasGlobalOptOut()'), 'Global Privacy Control must be respected');
+assert.ok(nativeAds.includes("choice === 'decline'"), 'Prior opt-out must take precedence');
+assert.ok(nativeAds.includes("frame.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox')"), 'Tool ads require sandbox isolation');
+assert.ok(!nativeAds.includes('allow-same-origin'), 'Ad frames must not gain same-origin access');
+const regionApi = await read('functions/api/analytics-region.js');
+assert.ok(regionApi.includes("adsterraMode: country === 'IN' ? 'automatic' : 'opt-in'"), 'Only India may be automatically served');
+assert.ok(!regionApi.includes("console.log("), 'No request logging in region API');
 assert.ok(nativeAds.includes("script.src = scriptSrc"), 'Native ad script must only be injected on opt-in');
 assert.ok(nativeAds.includes("localStorage.setItem(key, value)"), 'Ad consent preference is not stored');
 assert.ok(nativeAds.includes("location.reload()"), 'Ad preference revocation requires a reload');
@@ -138,7 +149,8 @@ assert.ok(!headers.match(/^\/\*\n  Content-Security-Policy:/m),
   'A wildcard CSP conflicts with page-specific ad policies');
 const privacy = await read('dist/privacy.html');
 assert.ok(privacy.includes('Adsterra Native Banner'), 'Privacy must explain native advertisements');
-assert.ok(privacy.includes('third-party JavaScript'), 'Privacy must disclose tool-page third-party script risk');
+assert.ok(privacy.includes('automatically without a confirmation prompt'), 'Privacy must disclose India auto ads');
+assert.ok(privacy.includes('sandboxed iframe'), 'Privacy must explain tool-page script isolation');
 assert.ok(nativeAds.includes('filefit_adsterra_sitewide_choice_v1'),
   'New site-wide consent must not reuse narrow guide-only consent');
 assert.ok(!nativeAds.includes('filefit_adsterra_native_choice_v1'),
