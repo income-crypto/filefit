@@ -70,3 +70,9 @@
 .hero{padding-top:18px}
 @media(max-width:850px){.hero{padding-top:22px}}
 @media(max-width:600px){.hero{padding-top:24px}}
+
+/* Audit fix: filenames must wrap instead of stretching 320px mobile screens. */
+.result-box,.result-box>*,.selected-file,.selected-file>*{min-width:0}
+.download-button{overflow-wrap:anywhere;word-break:break-word;max-width:100%;white-space:normal;text-align:center}
+/* Meet WCAG AA normal-text contrast on light success and file-list backgrounds. */
+.file-size,.result-sub,.field .helper{color:#455e4d}
