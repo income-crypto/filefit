@@ -5,7 +5,7 @@
   const TOOL_INFO = {
     compress: { title: 'Compress image', desc: 'Reduce an image to a size that fits your upload requirements.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Compress image' },
     resize: { title: 'Photo & signature resizer', desc: 'Set exact pixel dimensions for forms, IDs, and signatures.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Resize image' },
-    convert: { title: 'Convert image', desc: 'Change JPG, PNG, and WebP files into another format.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: false, hint: 'JPG, PNG, or WebP • up to 50 MB • 40 megapixels', button: 'Convert image' },
+    convert: { title: 'Convert image', desc: 'Turn SVG, JPG, PNG or WebP images into JPG, PNG or WebP.', accept: 'image/jpeg,image/png,image/webp,image/svg+xml,.jpg,.jpeg,.png,.webp,.svg', multiple: false, hint: 'JPG, PNG, WebP (up to 50 MB) or SVG (up to 5 MB) • 40 megapixels', button: 'Convert image' },
     'images-pdf': { title: 'Images to PDF', desc: 'Combine your photos into one PDF, in the order you choose.', accept: 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp', multiple: true, hint: 'JPG, PNG, or WebP • up to 20 images, 50 MB each', button: 'Create PDF' },
     merge: { title: 'Merge PDFs', desc: 'Combine multiple PDFs into one file without uploading them.', accept: 'application/pdf,.pdf', multiple: true, hint: 'PDF only • 2–20 files, 80 MB each', button: 'Merge PDFs' },
     split: { title: 'Split PDF', desc: 'Keep the pages you choose from a PDF.', accept: 'application/pdf,.pdf', multiple: false, hint: 'PDF only • up to 80 MB', button: 'Extract pages' }
@@ -14,6 +14,7 @@
   // Browser-only processing: bound memory-heavy inputs to avoid tab freezes.
   // These limits apply to files themselves; no file contents are transmitted.
   const MAX_IMAGE_BYTES = 50 * 1024 * 1024;
+  const MAX_SVG_BYTES = 5 * 1024 * 1024;
   const MAX_PDF_BYTES = 80 * 1024 * 1024;
   const MAX_TOTAL_BYTES = 150 * 1024 * 1024;
   const MAX_FILE_COUNT = 20;
@@ -42,6 +43,7 @@
   const fileExtension = (file) => (file.name.split('.').pop() || '').toLowerCase();
   const isImage = (file) => ['jpg', 'jpeg', 'png', 'webp'].includes(fileExtension(file)) || ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
   const isPdf = (file) => file.type === 'application/pdf' || fileExtension(file) === 'pdf';
+  const isSvg = (file) => file.type === 'image/svg+xml' || fileExtension(file) === 'svg';
   const saveBlob = (blob, name) => {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
@@ -194,9 +196,9 @@
     if (!incoming.length) return;
     const isPdfTool = currentTool === 'merge' || currentTool === 'split';
     const perFileLimit = isPdfTool ? MAX_PDF_BYTES : MAX_IMAGE_BYTES;
-    const valid = incoming.filter(file => isPdfTool ? isPdf(file) : isImage(file));
+    const valid = incoming.filter(file => isPdfTool ? isPdf(file) : (isImage(file) || (currentTool === 'convert' && isSvg(file))));
     if (!valid.length) {
-      setStatus(`Please choose ${isPdfTool ? 'PDF files' : 'JPG, PNG, or WebP images'}.`, 'error');
+      setStatus(`Please choose ${isPdfTool ? 'PDF files' : currentTool === 'convert' ? 'JPG, PNG, WebP or SVG images' : 'JPG, PNG, or WebP images'}.`, 'error');
       upload.value = '';
       return;
     }
@@ -207,6 +209,11 @@
     }
     if (valid.some(file => file.size > perFileLimit)) {
       setStatus(`For reliable processing in your browser, choose ${isPdfTool ? 'PDFs' : 'images'} up to ${formatBytes(perFileLimit)} each.`, 'error');
+      upload.value = '';
+      return;
+    }
+    if (valid.some(file => isSvg(file) && file.size > MAX_SVG_BYTES)) {
+      setStatus('SVG files must be 5 MB or smaller for safe browser conversion.', 'error');
       upload.value = '';
       return;
     }
@@ -252,8 +259,70 @@
       }, mime, quality);
     });
   }
+  // SVGs are XML documents. Validate them without inserting markup into the page,
+  // reject script/external references, then render only as an image for conversion.
+  async function safeSvgBlob(file) {
+    if (file.size > MAX_SVG_BYTES) throw new Error('SVG files must be 5 MB or smaller.');
+    const source = await file.text();
+    if (/<!\s*(?:DOCTYPE|ENTITY)\b/i.test(source) || /<\?(?!xml(?:\s|\?>))/i.test(source)) {
+      throw new Error('This SVG contains unsupported XML declarations or entities.');
+    }
+    const parsed = new DOMParser().parseFromString(source, 'image/svg+xml');
+    const root = parsed.documentElement;
+    const namespace = 'http://www.w3.org/2000/svg';
+    if (parsed.getElementsByTagName('parsererror').length || root?.localName !== 'svg' || root.namespaceURI !== namespace) {
+      throw new Error('Invalid SVG file. Please select a valid SVG image.');
+    }
+    const blocked = new Set(['script', 'foreignobject', 'iframe', 'object', 'embed', 'image', 'feimage', 'animate', 'animatemotion', 'animatetransform', 'set']);
+    const safeUrls = text => {
+      for (const match of text.matchAll(/url\s*\(\s*(['"]?)(.*?)\1\s*\)/gi)) {
+        if (!/^#[a-z0-9_.:-]+$/i.test(match[2].trim())) return false;
+      }
+      return true;
+    };
+    for (const element of parsed.getElementsByTagName('*')) {
+      if (element.namespaceURI !== namespace || blocked.has(element.localName.toLowerCase())) {
+        throw new Error('This SVG contains unsupported or unsafe embedded content. Use a self-contained SVG.');
+      }
+      if (element.localName.toLowerCase() === 'style' &&
+          (/@import\b|@font-face\b|expression\s*\(/i.test(element.textContent || '') || !safeUrls(element.textContent || ''))) {
+        throw new Error('SVG styles cannot load external images, fonts or stylesheets.');
+      }
+      for (const attr of element.attributes) {
+        const attrName = attr.name.toLowerCase();
+        if (attrName.startsWith('on') || attrName === 'xml:base' || attrName === 'src' ||
+            /@import\b|@font-face\b|expression\s*\(/i.test(attr.value) || !safeUrls(attr.value)) {
+          throw new Error('This SVG contains unsupported or unsafe attributes.');
+        }
+        if ((attrName === 'href' || attrName.endsWith(':href')) && !/^#[a-z0-9_.:-]+$/i.test(attr.value.trim())) {
+          throw new Error('External SVG references are not supported. Please use a self-contained SVG.');
+        }
+      }
+    }
+    const parsePx = value => {
+      const m = /^(\d+(?:\.\d+)?)\s*(?:px)?$/i.exec((value || '').trim());
+      return m ? Number(m[1]) : null;
+    };
+    const viewBox = (root.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+    const vw = viewBox.length === 4 && viewBox[2] > 0 ? viewBox[2] : null;
+    const vh = viewBox.length === 4 && viewBox[3] > 0 ? viewBox[3] : null;
+    let width = parsePx(root.getAttribute('width'));
+    let height = parsePx(root.getAttribute('height'));
+    width = width || (height && vw && vh ? height * vw / vh : vw || 300);
+    height = height || (width && vw && vh ? width * vh / vw : vh || 150);
+    width = Math.ceil(width);
+    height = Math.ceil(height);
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width < 1 || height < 1 ||
+        width > 8192 || height > 8192 || width * height > MAX_IMAGE_PIXELS) {
+      throw new Error('SVG dimensions exceed safe browser limits (maximum 8,192 pixels per side and 40 megapixels).');
+    }
+    root.setAttribute('width', String(width));
+    root.setAttribute('height', String(height));
+    return new Blob([new XMLSerializer().serializeToString(root)], { type: 'image/svg+xml' });
+  }
   async function loadImage(file) {
-    const url = URL.createObjectURL(file);
+    const source = isSvg(file) ? await safeSvgBlob(file) : file;
+    const url = URL.createObjectURL(source);
     const image = new Image();
     try {
       await new Promise((resolve, reject) => {
