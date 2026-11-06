@@ -106,6 +106,27 @@ const headers = await read('dist/_headers');
 assert.ok(headers.includes('Content-Security-Policy'), 'Missing CSP');
 assert.ok(headers.includes('/guides/*') && headers.includes('/blog/*'), 'Content-only CSP must be present');
 assert.ok(headers.includes('https://bauval.org'), 'Native banner origin missing in content CSP');
+
+const policies = [...headers.matchAll(/^([/][^\n]+)\n  Content-Security-Policy: (.+)$/gm)]
+  .map(([, path, policy]) => ({ path, policy }));
+const policyFor = page => policies.filter(rule =>
+  rule.path.endsWith('*')
+    ? page.startsWith(rule.path.slice(0, -1))
+    : page === rule.path
+);
+for (const file of staticPages) {
+  const page = file === 'index.html' ? '/' :
+    '/' + file.replace(/\/index\.html$/, '/').replace(/^(about|contact|privacy|terms)\.html$/, '$1');
+  const matches = policyFor(page);
+  assert.equal(matches.length, 1, 'Exactly one CSP is required for ' + page);
+  const isContent = page.startsWith('/guides/') || page.startsWith('/blog/');
+  assert.equal(matches[0].policy.includes('https://bauval.org'), isContent,
+    'Adsterra host must be permitted only on content pages: ' + page);
+}
+assert.equal(policyFor('/404.html').length, 1, '404 response should retain CSP');
+assert.ok(!headers.match(/^\/\*\n  Content-Security-Policy:/m),
+  'Wildcard CSP collides with guide-level CSP (Cloudflare concatenates duplicates)');
+
 const globalCsp = headers.split('/guides/*')[0];
 assert.ok(!globalCsp.includes('https://bauval.org'), 'Never relax the tool pages global CSP');
 const privacy = await read('dist/privacy.html');
