@@ -53,11 +53,24 @@ for (const file of staticPages) {
     assert.ok(!html.includes('href="/' + slug + '.html"'), 'Redirecting internal HTML link: ' + file);
   }
   assert.ok(!html.includes('src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"'), 'Unexpected live AdSense loader');
+  const nativeLoaderCount = (html.match(/src="\/adsterra-native\.js"/g) || []).length;
+  const contentPage = file === 'blog/index.html' || file.startsWith('guides/');
+  assert.equal(nativeLoaderCount, contentPage ? 1 : 0, 'Adsterra loader must be content-only: ' + file);
+  assert.ok(!html.includes('bauval.org'), 'Never embed third-party advertising directly in HTML: ' + file);
   verified++;
 }
 
-const jsFiles = ['app.js', 'analytics-consent.js'];
+const jsFiles = ['app.js', 'analytics-consent.js', 'adsterra-native.js'];
 for (const file of jsFiles) new Function(await read('dist/' + file));
+assert.equal(config.adsterra.websiteApproved, true, 'Adsterra site must be approved');
+assert.equal(config.adsterra.enabled, true, 'Adsterra guide loader should be enabled');
+assert.equal(config.adsterra.optInOnly, true, 'Adsterra must always require opt-in');
+assert.equal(config.adsterra.contentPagesOnly, true, 'No ads on file processing pages');
+const nativeAds = await read('dist/adsterra-native.js');
+assert.ok(nativeAds.includes("choice === 'allow'"), 'Opt-in gate missing');
+assert.ok(nativeAds.includes("script.src = scriptSrc"), 'Native ad script must only be injected on opt-in');
+assert.ok(nativeAds.includes("localStorage.setItem(key, value)"), 'Ad consent preference is not stored');
+assert.ok(nativeAds.includes("location.reload()"), 'Ad preference revocation requires a reload');
 const app = await read('dist/app.js');
 for (const event of ['filefit_tool_start', 'filefit_tool_complete', 'filefit_tool_error']) {
   assert.ok(app.includes(event), 'Missing privacy-safe GA4 tool event: ' + event);
@@ -91,6 +104,12 @@ assert.ok(app.includes("'script'"), 'SVG scripts must not be supported');
 assert.ok(app.includes("root.namespaceURI !== namespace"), 'SVG namespace validation is required');
 const headers = await read('dist/_headers');
 assert.ok(headers.includes('Content-Security-Policy'), 'Missing CSP');
+assert.ok(headers.includes('/guides/*') && headers.includes('/blog/*'), 'Content-only CSP must be present');
+assert.ok(headers.includes('https://bauval.org'), 'Native banner origin missing in content CSP');
+const globalCsp = headers.split('/guides/*')[0];
+assert.ok(!globalCsp.includes('https://bauval.org'), 'Never relax the tool pages global CSP');
+const privacy = await read('dist/privacy.html');
+assert.ok(privacy.includes('Adsterra Native Banner'), 'Privacy must explain native advertisements');
 assert.ok(headers.includes('X-Content-Type-Options: nosniff'), 'Missing nosniff header');
 const regionConfig = JSON.parse(await read('dist/_routes.json'));
 assert.deepEqual(regionConfig.include, ['/api/analytics-region'], 'Keep Pages Functions limited to the region endpoint');
