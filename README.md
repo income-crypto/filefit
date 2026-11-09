@@ -35,3 +35,11 @@ Both AdSense and Infolinks serving remain **disabled** through `ads-config.json`
 Browser input limits: 50 MiB per image, 80 MiB per PDF, 20 files and 150 MiB total per batch, with a 40-megapixel decoded image cap. Large PDFs can still exceed mobile device memory. WebP encoding varies by browser, PDF encryption is not supported in all cases, and the PDF split tool produces one PDF containing selected pages rather than a ZIP of individual pages. Compression targets are best effort. SVG import is restricted to safe self-contained graphics; linked files, scripted/animated SVGs, foreign objects, and SVG output/vector tracing are not supported.
 
 For search discovery maintain the `robots.txt`, `sitemap.xml`, canonical tags and useful tool-guide content. Successful build tests do not confirm Google indexing.
+
+## Answer discovery and AI search
+
+The homepage includes a human-readable tool-selection question hub. Each of the six dedicated tool pages gives a concise, technically accurate answer beside its instructions and existing WebApplication schema. WebSite JSON-LD has a consistent canonical entity ID.
+
+Google AI search and Bing/Copilot discovery rely on ordinary indexable pages with useful text, not special AI-only schema or llms.txt files. Avoid doorway pages, AI keyword stuffing, inaccurate claims or deprecated FAQPage rich-result markup. The existing wildcard robots.txt rules already permit public search crawlers; model training crawl policies should be considered independently.
+
+Use Google Search Console and Bing Webmaster Tools to monitor indexing and the available AI citation/grounding reports. Update sitemap lastmod dates only when the actual page content changes.
