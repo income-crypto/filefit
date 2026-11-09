@@ -63,6 +63,25 @@ for (const file of staticPages) {
   verified++;
 }
 
+// Answer-first content must be visible and connected to accurate schema.
+const hubHtml = await read('dist/index.html');
+assert.ok(hubHtml.includes('id="choose-tool"'), 'Homepage tool decision hub missing');
+assert.equal((hubHtml.match(/<article><h3>/g) || []).length, 6, 'Six tool-selection answers required');
+const websiteJson = hubHtml.split('<script type="application/ld+json">')[1]?.split('</script>')[0];
+assert.ok(websiteJson, 'WebSite structured data required');
+assert.equal(JSON.parse(websiteJson)['@id'], 'https://file-fit.pages.dev/#website', 'Website identity inconsistent');
+for (const file of staticPages.filter(p => p.startsWith('tools/'))) {
+  const html = await read('dist/' + file);
+  assert.equal((html.match(/class="direct-answer"/g) || []).length, 1, 'One direct answer required: ' + file);
+  assert.ok(html.indexOf('class="direct-answer"') > html.indexOf('id="guide-title"'), 'Answer should follow guide heading: ' + file);
+  const schemaText = html.split('<script type="application/ld+json">')[1]?.split('</script>')[0];
+  assert.ok(schemaText, 'Tool schema missing: ' + file);
+  const graph = JSON.parse(schemaText)['@graph'];
+  assert.ok(graph.some(e => e.isPartOf?.['@id'] === 'https://file-fit.pages.dev/#website'), 'Website entity link missing: ' + file);
+}
+for(const url of ["https://file-fit.pages.dev/","https://file-fit.pages.dev/about","https://file-fit.pages.dev/tools/image-compressor/","https://file-fit.pages.dev/tools/photo-signature-resizer/","https://file-fit.pages.dev/tools/image-converter/","https://file-fit.pages.dev/tools/jpg-to-pdf/","https://file-fit.pages.dev/tools/merge-pdf/","https://file-fit.pages.dev/tools/split-pdf/"]) {
+  assert.ok(sitemap.includes('<loc>' + url + '</loc><lastmod>2026-11-09</lastmod>'), 'Updated page lastmod missing: ' + url);
+}
 const jsFiles = ['app.js', 'analytics-consent.js', 'adsterra-native.js'];
 for (const file of jsFiles) new Function(await read('dist/' + file));
 assert.equal(config.adsterra.websiteApproved, true, 'Adsterra site must be approved');
