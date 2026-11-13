@@ -12,7 +12,7 @@
   const key = 'filefit_adsterra_sitewide_choice_v1';
   const unitId = 'container-59f82937b99fbf55529d074d93094c6b';
   const scriptSrc = 'https://bauval.org/21/59f82937b99fbf55529d074d93094c6b';
-  const isToolPage = location.pathname === '/' || location.pathname.startsWith('/tools/');
+  const isToolPage = location.pathname === '/' || location.pathname === '/index.html' || location.pathname.startsWith('/tools/');
   let loaded = false;
   let choice = null;
   let pendingRequest = null;
@@ -55,8 +55,10 @@
     iframe.title = title;
     iframe.className = className;
     iframe.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox');
-    iframe.setAttribute('referrerpolicy', 'no-referrer');
-    iframe.setAttribute('loading', 'lazy');
+    // Send only the publisher origin to display-ad providers; never send filenames.
+    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    // The hero's display banner should initialize without waiting for a scroll.
+    iframe.setAttribute('loading', 'eager');
     iframe.srcdoc =
       '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
       '<meta name="viewport" content="width=device-width, initial-scale=1">' +
@@ -130,7 +132,7 @@
       frame.title = 'Sponsored advertisements';
       frame.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox');
       frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
-      frame.setAttribute('loading', 'lazy');
+      frame.setAttribute('loading', slot.dataset.filefitAdSlot === 'hero' ? 'eager' : 'lazy');
       frame.srcdoc =
         '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
         '<meta name="viewport" content="width=device-width, initial-scale=1">' +
@@ -154,6 +156,21 @@
     script.src = scriptSrc;
     script.onerror = () => { title.textContent = 'Advertisement unavailable'; };
     slot.append(script);
+  }
+  // No consent prompt is imposed on an undecided visitor. If full display ads
+  // cannot lawfully run before opt-in, present a plain labeled sponsored link
+  // without loading any remote tracking scripts. The footer still lets visitors
+  // explicitly enable display ads via Advertising preferences.
+  function showSponsoredFallback() {
+    if (loaded || hasGlobalOptOut() || choice === 'decline') return;
+    const label = el('div', 'filefit-ad-label', 'Advertisement');
+    const sponsored = el('a', 'filefit-hero-sponsored-link', 'Explore sponsored offers (external website)');
+    sponsored.href = heroFormats.sponsoredLink;
+    sponsored.target = '_blank';
+    sponsored.rel = 'sponsored noopener noreferrer';
+    sponsored.setAttribute('aria-label', 'Open a third-party sponsored offer in a new tab');
+    slot.replaceChildren(label, sponsored);
+    slot.hidden = false;
   }
   function showPrompt() {
     if (hasGlobalOptOut() || choice === 'decline') return;
@@ -223,10 +240,10 @@
       // Never infer consent from analyticsMode or the browser locale.
       if (hasGlobalOptOut() || choice === 'decline') return;
       if (choice === 'allow' || result.adsterraMode === 'automatic') showNativeAds();
-      else if (result.adsterraMode === 'opt-in') showPrompt();
-      else showPrompt();
+      else if (result.adsterraMode === 'opt-in') showSponsoredFallback();
+      else showSponsoredFallback();
     } catch (_) {
-      if (!hasGlobalOptOut() && choice !== 'decline') showPrompt();
+      if (!hasGlobalOptOut() && choice !== 'decline') showSponsoredFallback();
     } finally {
       clearTimeout(timeout);
       if (pendingRequest === controller) pendingRequest = null;
