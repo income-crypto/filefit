@@ -46,16 +46,28 @@ async function prepare(dir) {
     const html = await readFile(file, 'utf8');
     if (!html.includes('</main>')) throw new Error('Missing </main> in ' + file);
     if (html.includes('data-filefit-ad-slot=')) throw new Error('Ad slot already exists in ' + file);
-    // Keep the future placement after content, not beside the file picker,
-    // action buttons or generated download links. It must remain invisible
-    // and make no remote requests until a reviewed activation.
-    const marker = '<section class="shell filefit-ad-slot" data-filefit-ad-slot="after-content" aria-label="Advertisement" hidden></section>\n';
-    // Every regular public page gets one post-content placement. The first-party
-    // loader determines regional auto/opt-in consent and sandboxes tool pages.
+    // One ad unit per public page. On the homepage, position the same active
+    // native unit inside the hero, below the primary CTA and trust messages.
+    // Other pages retain the established after-content position; never place
+    // ads beside file pickers, processing buttons or generated downloads.
+    const isHomepage = file === 'dist/index.html';
+    const marker = isHomepage
+      ? '<section class="filefit-ad-slot hero-ad-placement" data-filefit-ad-slot="hero" aria-label="Advertisement" hidden></section>\n'
+      : '<section class="shell filefit-ad-slot" data-filefit-ad-slot="after-content" aria-label="Advertisement" hidden></section>\n';
     const loader = unit?.enabled
       ? '<script defer src="/adsterra-native.js"></script>\n'
       : '';
-    await writeFile(file, html.replace('</main>', marker + loader + '</main>'));
+    let placed = html;
+    if (isHomepage) {
+      const anchor = '      <div class="hero-orbit orbit-one"';
+      if (html.split(anchor).length !== 2 || !html.includes('class="hero shell"')) {
+        throw new Error('Cannot locate safe hero placement for the homepage ad.');
+      }
+      placed = html.replace(anchor, marker + anchor);
+    } else {
+      placed = html.replace('</main>', marker + '</main>');
+    }
+    await writeFile(file, placed.replace('</main>', loader + '</main>'));
     if (loader) adsterraPages++;
     count++;
   }
