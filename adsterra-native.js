@@ -2,16 +2,17 @@
  * India: show automatically after a same-origin country-level check.
  * Other/unknown regions: never load before explicit user permission.
  * Respect prior opt-outs and Global Privacy Control. On file-processing
- * pages, a sandboxed opaque-origin frame isolates advertising from files. */
+ * pages (including the homepage), an opaque-origin sandbox isolates
+ * advertising from user-selected files. */
 (() => {
   'use strict';
-  const slot = document.querySelector('[data-filefit-ad-slot="after-content"]');
+  const slot = document.querySelector('[data-filefit-ad-slot="hero"], [data-filefit-ad-slot="after-content"]');
   if (!slot) return;
 
   const key = 'filefit_adsterra_sitewide_choice_v1';
   const unitId = 'container-59f82937b99fbf55529d074d93094c6b';
   const scriptSrc = 'https://bauval.org/21/59f82937b99fbf55529d074d93094c6b';
-  const isToolPage = location.pathname.startsWith('/tools/');
+  const isToolPage = location.pathname === '/' || location.pathname.startsWith('/tools/');
   let loaded = false;
   let choice = null;
   let pendingRequest = null;
