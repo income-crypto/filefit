@@ -182,8 +182,8 @@ assert.ok(privacy.includes('Adsterra Native Banner'), 'Privacy must explain nati
 assert.ok(privacy.includes('homepage hero'), 'Privacy must identify the updated homepage ad position');
 assert.ok(privacy.includes('automatically without a confirmation prompt'), 'Privacy must disclose India auto ads');
 assert.ok(privacy.includes('sandboxed iframe'), 'Privacy must explain tool-page script isolation');
-assert.ok(nativeAds.includes("location.pathname === '/' || location.pathname.startsWith('/tools/')"),
-  'Homepage must sandbox third-party ad scripts from the built-in file workspace');
+assert.ok(nativeAds.includes("location.pathname === '/' || location.pathname === '/index.html' || location.pathname.startsWith('/tools/')"),
+  'Homepage and file tools must sandbox third-party ad scripts from the built-in file workspace');
 assert.ok(nativeAds.includes('data-filefit-ad-slot="hero"'), 'Native loader must find hero placement');
 assert.ok(nativeAds.includes('https://bauval.org/22/48bd9a5f41aab74f6f586af6529d4592'), '468x60 banner must use owner-provided tag');
 assert.ok(nativeAds.includes('https://bauval.org/14/01c683b010b0a5cffdaa8cc3396c4ce5'), 'Social Bar must use owner-provided tag');
