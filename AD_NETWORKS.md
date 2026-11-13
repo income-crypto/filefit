@@ -67,3 +67,16 @@ Google permits other providers alongside AdSense if the site follows its publish
 
 ## Next item needed to actually connect anything
 The owner must obtain an **AdSense verification meta tag** and/or **Infolinks approval plus site-specific script**. Without them, the site is only prepared, not monetized.
+
+
+## Additional homepage hero ad codes (13 November 2026)
+
+The owner supplied three more ad codes and one direct advertiser link. Filefit's homepage hero has a **single labeled advertisement area** that runs Adsterra code only according to the existing regional advertising preference and opt-out rules.
+
+- Existing Native Banner: remains in the hero, sandboxed on the homepage.
+- 468 × 60 banner: `https://bauval.org/22/48bd9a5f41aab74f6f586af6529d4592`, sandboxed and responsively scaled; no second global ad-loader.
+- Optional Social Bar: `https://bauval.org/14/01c683b010b0a5cffdaa8cc3396c4ce5`. Requires a separate affirmative click; runs in an opaque-origin sandboxed frame, not in the file-processing document.
+- Smartlink: `https://araplhn.org/4/073ae2ad4af0494cc88b680b60e9e903`. Appears only as a clearly labeled sponsored external link with `rel="sponsored noopener noreferrer"`; never automatically redirects visitors.
+- **Popunder disabled**: the supplied `abscloud.org/1/` tag is deliberately not injected. It can open windows when users interact with the page, which is unsuitable for Filefit's file-upload and download workflows.
+
+The additional codes were supplied by the owner, but independent provider-unit approval and paid impression eligibility have **not** been verified. Ad-blocking, browser sandbox restrictions, ad inventory and region rules may affect delivery. Validate every new format against the advertising provider's terms and the user's privacy requirements before expanding or making units automatic. Do not use automated traffic or clicks.
