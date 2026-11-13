@@ -13,6 +13,36 @@
   const unitId = 'container-59f82937b99fbf55529d074d93094c6b';
   const scriptSrc = 'https://bauval.org/21/59f82937b99fbf55529d074d93094c6b';
   const isToolPage = location.pathname === '/' || location.pathname === '/index.html' || location.pathname.startsWith('/tools/');
+  // Sponsored placements must not reserve a huge blank area if the provider
+  // rejects a request or returns no ad creative.
+  window.addEventListener('message', event => {
+    if (!event.data || event.data.filefitAdFrameStatus !== 'failed' && event.data.filefitAdFrameStatus !== 'empty') return;
+    const iframe = [...slot.querySelectorAll('iframe')].find(el => el.contentWindow === event.source);
+    if (!iframe) return;
+    iframe.hidden = true;
+    iframe.style.display = 'none';
+    if (iframe.classList.contains('filefit-native-ad-frame')) {
+      const wrapper = iframe.closest('.filefit-hero-native-area');
+      if (wrapper) wrapper.hidden = true;
+    } else if (iframe.classList.contains('filefit-hero-banner-frame')) {
+      const holder = iframe.closest('.filefit-hero-banner-holder');
+      if (holder) {
+        const heading = holder.previousElementSibling;
+        if (heading && heading.classList.contains('filefit-ad-label')) heading.hidden = true;
+        holder.hidden = true;
+      }
+    }
+    if (!slot.querySelector('iframe:not([hidden])')) {
+      const link = slot.querySelector('a.filefit-hero-sponsored-link');
+      if (link) {
+        const label = el('div', 'filefit-ad-label', 'Sponsored link');
+        slot.replaceChildren(label, link);
+      } else {
+        slot.replaceChildren();
+        slot.hidden = true;
+      }
+    }
+  });
   let loaded = false;
   let choice = null;
   let pendingRequest = null;
@@ -64,6 +94,7 @@
       '<meta name="viewport" content="width=device-width, initial-scale=1">' +
       '<base target="_blank"><style>html,body{margin:0;padding:0;background:transparent;' +
       'font-family:system-ui,sans-serif}*{box-sizing:border-box}</style></head><body>' +
+      '<script src="/ad-frame-monitor.js"><\/script>' +
       body + '</body></html>';
     return iframe;
   }
@@ -138,6 +169,7 @@
         '<meta name="viewport" content="width=device-width, initial-scale=1">' +
         '<base target="_blank"><style>html,body{margin:0;padding:0;background:transparent;' +
         'font-family:system-ui,sans-serif}*{box-sizing:border-box}</style></head><body>' +
+        '<script src="/ad-frame-monitor.js"><\/script>' +
         '<div id="' + unitId + '"></div>' +
         '<script async data-cfasync="false" src="' + scriptSrc + '"><\/script>' +
         '</body></html>';
