@@ -1,4 +1,4 @@
-/* Filefit Adsterra Native Banner.
+/* Filefit consent-aware Adsterra display placements.
  * India: show automatically after a same-origin country-level check.
  * Other/unknown regions: never load before explicit user permission.
  * Respect prior opt-outs and Global Privacy Control. On file-processing
