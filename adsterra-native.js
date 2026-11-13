@@ -42,6 +42,79 @@
     slot.hidden = true;
     slot.replaceChildren();
   }
+  // Additional owner-supplied hero formats. Keep the Popunder disabled: it
+  // cannot display inside a rectangular hero slot and may open new windows
+  // when visitors use Filefit. Never put third-party scripts in the file-tool DOM.
+  const heroFormats = {
+    banner: 'https://bauval.org/22/48bd9a5f41aab74f6f586af6529d4592',
+    socialBar: 'https://bauval.org/14/01c683b010b0a5cffdaa8cc3396c4ce5',
+    sponsoredLink: 'https://araplhn.org/4/073ae2ad4af0494cc88b680b60e9e903'
+  };
+  function isolatedAdFrame(title, body, className) {
+    const iframe = document.createElement('iframe');
+    iframe.title = title;
+    iframe.className = className;
+    iframe.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox');
+    iframe.setAttribute('referrerpolicy', 'no-referrer');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.srcdoc =
+      '<!doctype html><html lang="en"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<base target="_blank"><style>html,body{margin:0;padding:0;background:transparent;' +
+      'font-family:system-ui,sans-serif}*{box-sizing:border-box}</style></head><body>' +
+      body + '</body></html>';
+    return iframe;
+  }
+  function appendHeroFormats() {
+    if (slot.dataset.filefitAdSlot !== 'hero') return;
+    const nativeFrame = slot.querySelector('.filefit-native-ad-frame');
+    if (!nativeFrame) return;
+    const grid = el('div', 'filefit-hero-ad-grid');
+    const primary = el('div', 'filefit-hero-native-area');
+    primary.append(nativeFrame);
+    grid.append(primary);
+
+    const extras = el('div', 'filefit-hero-extra-ads');
+    const bannerHeading = el('div', 'filefit-ad-label', 'Advertisement · 468 × 60 banner');
+    const bannerHolder = el('div', 'filefit-hero-banner-holder');
+    const atOptions = "{'key':'48bd9a5f41aab74f6f586af6529d4592','format':'iframe','height':60,'width':468,'params':{}}";
+    const bannerBody = '<script>atOptions=' + atOptions + ';<\/script>' +
+      '<script async data-cfasync="false" src="' + heroFormats.banner + '"><\/script>';
+    const bannerFrame = isolatedAdFrame('Sponsored 468 by 60 banner', bannerBody, 'filefit-hero-banner-frame');
+    bannerHolder.append(bannerFrame);
+    const sizeBanner = () => {
+      if (!bannerHolder.isConnected) return;
+      const scale = Math.min(1, Math.max(1, bannerHolder.clientWidth) / 468);
+      bannerFrame.style.transform = 'scale(' + scale + ')';
+      bannerHolder.style.height = Math.ceil(60 * scale) + 'px';
+    };
+    window.addEventListener('resize', sizeBanner, { passive: true });
+    requestAnimationFrame(sizeBanner);
+    extras.append(bannerHeading, bannerHolder);
+
+    const sponsored = el('a', 'filefit-hero-sponsored-link', 'Explore sponsored offers (external website)');
+    sponsored.href = heroFormats.sponsoredLink;
+    sponsored.target = '_blank';
+    sponsored.rel = 'sponsored noopener noreferrer';
+    sponsored.setAttribute('aria-label', 'Open a third-party sponsored offer in a new tab');
+    extras.append(sponsored);
+
+    const socialBox = el('div', 'filefit-social-option');
+    const socialDescription = el('p', '', 'Optional Social Bar ads may display floating notices within a separate advertising box.');
+    const enableSocial = el('button', 'filefit-ad-button filefit-social-enable', 'Enable optional Social Bar');
+    enableSocial.type = 'button';
+    enableSocial.addEventListener('click', () => {
+      if (hasGlobalOptOut() || choice === 'decline') return;
+      const socialBody = '<script async data-cfasync="false" src="' +
+        heroFormats.socialBar + '"><\/script>';
+      const socialFrame = isolatedAdFrame('Optional floating sponsored notices', socialBody, 'filefit-social-ad-frame');
+      enableSocial.replaceWith(socialFrame);
+    });
+    socialBox.append(socialDescription, enableSocial);
+    extras.append(socialBox);
+    grid.append(extras);
+    slot.append(grid);
+  }
   function showNativeAds() {
     if (loaded || hasGlobalOptOut() || choice === 'decline') return;
     loaded = true;
@@ -68,6 +141,7 @@
         '</body></html>';
       frame.onerror = () => { title.textContent = 'Advertisement unavailable'; };
       slot.append(frame);
+      appendHeroFormats();
       return;
     }
 
