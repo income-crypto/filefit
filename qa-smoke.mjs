@@ -196,6 +196,7 @@ assert.ok(nativeAds.includes("iframe.setAttribute('loading', 'eager')"), 'Hero 4
 assert.ok(nativeAds.includes('showSponsoredFallback()'), 'Unrecognized regions must have a labeled sponsored fallback');
 assert.ok(nativeAds.includes('filefitAdFrameStatus'), 'Ad frame failures must collapse empty ad slots');
 assert.ok(nativeAds.includes('ad-frame-monitor.js'), 'Ad frames must observe actual vendor script failures');
+assert.ok(headers.includes("script-src 'self' https://file-fit.pages.dev"), 'Sandboxed ad monitor must have an explicit allowed origin');
 const adFrameMonitor = await read('dist/ad-frame-monitor.js');
 assert.ok(adFrameMonitor.includes("report('failed')"), 'Provider errors must be detected');
 assert.ok(adFrameMonitor.includes("report(hasCreative() ? 'ready' : 'empty')"), 'No-fill ads must not remain blank');
