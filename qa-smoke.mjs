@@ -185,6 +185,14 @@ assert.ok(privacy.includes('sandboxed iframe'), 'Privacy must explain tool-page 
 assert.ok(nativeAds.includes("location.pathname === '/' || location.pathname.startsWith('/tools/')"),
   'Homepage must sandbox third-party ad scripts from the built-in file workspace');
 assert.ok(nativeAds.includes('data-filefit-ad-slot="hero"'), 'Native loader must find hero placement');
+assert.ok(nativeAds.includes('https://bauval.org/22/48bd9a5f41aab74f6f586af6529d4592'), '468x60 banner must use owner-provided tag');
+assert.ok(nativeAds.includes('https://bauval.org/14/01c683b010b0a5cffdaa8cc3396c4ce5'), 'Social Bar must use owner-provided tag');
+assert.ok(nativeAds.includes('https://araplhn.org/4/073ae2ad4af0494cc88b680b60e9e903'), 'Sponsored link must use owner-provided destination');
+assert.ok(!nativeAds.includes('https://abscloud.org/1/'), 'Intrusive Popunder must not load silently');
+assert.ok(nativeAds.includes("sponsored.rel = 'sponsored noopener noreferrer'"), 'Outbound sponsored link must be labeled and isolated');
+assert.ok(nativeAds.includes('filefit-social-enable'), 'Social Bar must require an explicit click');
+assert.ok(nativeAds.includes('bannerFrame.style.transform'), '468-pixel banner must scale on phones');
+
 assert.ok(nativeAds.includes('filefit_adsterra_sitewide_choice_v1'),
   'New site-wide consent must not reuse narrow guide-only consent');
 assert.ok(!nativeAds.includes('filefit_adsterra_native_choice_v1'),
