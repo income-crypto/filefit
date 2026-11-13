@@ -107,3 +107,9 @@
 .seo-content .direct-answer{border-left:3px solid #8db69a;background:#f0f6ed;border-radius:0 10px 10px 0;padding:15px 18px;line-height:1.75;color:#365443}
 .seo-content .direct-answer strong{display:block;color:#1f5947;margin-bottom:5px}
 @media(max-width:600px){.answer-cards{grid-template-columns:1fr}.answer-cards article{padding:17px}}
+
+/* One labeled Native Banner in the homepage hero, after all primary content.
+   Do not duplicate the ad unit or place it beside navigation/file controls. */
+.hero .hero-ad-placement{position:relative;z-index:1;max-width:860px;margin:42px auto 4px;padding:20px;border:1px solid #d7e3d8;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(26,58,46,.045);text-align:center}
+.hero .hero-ad-placement .filefit-ad-label{color:#465d50;font-weight:700;letter-spacing:.06em}
+@media(max-width:600px){.hero .hero-ad-placement{margin-top:34px;padding:14px 10px;border-radius:12px}}
