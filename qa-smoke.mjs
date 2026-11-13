@@ -182,8 +182,8 @@ assert.ok(privacy.includes('Adsterra Native Banner'), 'Privacy must explain nati
 assert.ok(privacy.includes('homepage hero'), 'Privacy must identify the updated homepage ad position');
 assert.ok(privacy.includes('automatically without a confirmation prompt'), 'Privacy must disclose India auto ads');
 assert.ok(privacy.includes('sandboxed iframe'), 'Privacy must explain tool-page script isolation');
-assert.ok(nativeAds.includes("location.pathname === '/' || location.pathname.startsWith('/tools/')"),
-  'Homepage must sandbox third-party ad scripts from the built-in file workspace');
+assert.ok(nativeAds.includes("location.pathname === '/' || location.pathname === '/index.html' || location.pathname.startsWith('/tools/')"),
+  'Homepage and file tools must sandbox third-party ad scripts from the built-in file workspace');
 assert.ok(nativeAds.includes('data-filefit-ad-slot="hero"'), 'Native loader must find hero placement');
 assert.ok(nativeAds.includes('https://bauval.org/22/48bd9a5f41aab74f6f586af6529d4592'), '468x60 banner must use owner-provided tag');
 assert.ok(nativeAds.includes('https://bauval.org/14/01c683b010b0a5cffdaa8cc3396c4ce5'), 'Social Bar must use owner-provided tag');
@@ -191,12 +191,22 @@ assert.ok(nativeAds.includes('https://araplhn.org/4/073ae2ad4af0494cc88b680b60e9
 assert.ok(!nativeAds.includes('https://abscloud.org/1/'), 'Intrusive Popunder must not load silently');
 assert.ok(nativeAds.includes("sponsored.rel = 'sponsored noopener noreferrer'"), 'Outbound sponsored link must be labeled and isolated');
 assert.ok(nativeAds.includes('filefit-social-enable'), 'Social Bar must require an explicit click');
+assert.ok(nativeAds.includes("slot.dataset.filefitAdSlot === 'hero' ? 'eager' : 'lazy'"), 'Hero native ad must load eagerly');
+assert.ok(nativeAds.includes("iframe.setAttribute('loading', 'eager')"), 'Hero 468x60 banner must load eagerly');
+assert.ok(nativeAds.includes('showSponsoredFallback()'), 'Unrecognized regions must have a labeled sponsored fallback');
+assert.ok(nativeAds.includes("location.pathname === '/index.html'"), 'File processing must be sandboxed on /index.html too');
+assert.ok(!nativeAds.includes("else if (result.adsterraMode === 'opt-in') showPrompt()"), 'Do not put an opt-in prompt in the main hero');
+
 assert.ok(nativeAds.includes('bannerFrame.style.transform'), '468-pixel banner must scale on phones');
 
 assert.ok(nativeAds.includes('filefit_adsterra_sitewide_choice_v1'),
   'New site-wide consent must not reuse narrow guide-only consent');
 assert.ok(!nativeAds.includes('filefit_adsterra_native_choice_v1'),
   'Older guide-only choice must not grant site-wide consent');
+const bannerCspHash = "sha256-1Co4Adwr695jWFrKb0QeoMyXMVy2A/PKvT6o2X4zFxc=";
+for (const path of ['/', '/index.html']) {
+  assert.ok(policyFor(path)[0].policy.includes(bannerCspHash), 'Homepage must allow only the known inline banner configuration by CSP hash: ' + path);
+}
 assert.ok(headers.includes('X-Content-Type-Options: nosniff'), 'Missing nosniff header');
 const regionConfig = JSON.parse(await read('dist/_routes.json'));
 assert.deepEqual(regionConfig.include, ['/api/analytics-region'], 'Keep Pages Functions limited to the region endpoint');
