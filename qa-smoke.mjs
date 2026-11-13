@@ -55,8 +55,19 @@ for (const file of staticPages) {
   assert.ok(!html.includes('src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"'), 'Unexpected live AdSense loader');
   const nativeLoaderCount = (html.match(/src="\/adsterra-native\.js"/g) || []).length;
   assert.equal(nativeLoaderCount, 1, 'Each regular page must have exactly one opt-in Adsterra loader: ' + file);
-  assert.equal((html.match(/data-filefit-ad-slot="after-content"/g) || []).length, 1,
-    'Exactly one advertising space after main content: ' + file);
+  assert.equal((html.match(/data-filefit-ad-slot="/g) || []).length, 1,
+    'Exactly one advertisement placement per public page: ' + file);
+  if (file === 'index.html') {
+    assert.ok(html.includes('data-filefit-ad-slot="hero"'), 'Homepage ad must be in the hero');
+    assert.ok(!html.includes('data-filefit-ad-slot="after-content"'), 'No duplicate homepage ad after content');
+    assert.ok(html.indexOf('data-filefit-ad-slot="hero"') > html.indexOf('class="trust-strip"'),
+      'Ad must follow the hero CTA and trust messages');
+    assert.ok(html.indexOf('data-filefit-ad-slot="hero"') < html.indexOf('class="tool-section'),
+      'Homepage ad must stay within the hero');
+  } else {
+    assert.ok(html.includes('data-filefit-ad-slot="after-content"'),
+      'All other pages must keep post-content ad placements: ' + file);
+  }
   assert.ok(html.indexOf('data-filefit-ad-slot=') > html.indexOf('id="workspace"') || !file.startsWith('tools/'),
     'Advertising must not be placed in the tool workspace: ' + file);
   assert.ok(!html.includes('bauval.org'), 'Never embed third-party advertising directly in HTML: ' + file);
@@ -168,8 +179,12 @@ assert.ok(!headers.match(/^\/\*\n  Content-Security-Policy:/m),
   'A wildcard CSP conflicts with page-specific ad policies');
 const privacy = await read('dist/privacy.html');
 assert.ok(privacy.includes('Adsterra Native Banner'), 'Privacy must explain native advertisements');
+assert.ok(privacy.includes('homepage hero'), 'Privacy must identify the updated homepage ad position');
 assert.ok(privacy.includes('automatically without a confirmation prompt'), 'Privacy must disclose India auto ads');
 assert.ok(privacy.includes('sandboxed iframe'), 'Privacy must explain tool-page script isolation');
+assert.ok(nativeAds.includes("location.pathname === '/' || location.pathname.startsWith('/tools/')"),
+  'Homepage must sandbox third-party ad scripts from the built-in file workspace');
+assert.ok(nativeAds.includes('data-filefit-ad-slot="hero"'), 'Native loader must find hero placement');
 assert.ok(nativeAds.includes('filefit_adsterra_sitewide_choice_v1'),
   'New site-wide consent must not reuse narrow guide-only consent');
 assert.ok(!nativeAds.includes('filefit_adsterra_native_choice_v1'),
