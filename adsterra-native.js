@@ -94,7 +94,7 @@
       '<meta name="viewport" content="width=device-width, initial-scale=1">' +
       '<base target="_blank"><style>html,body{margin:0;padding:0;background:transparent;' +
       'font-family:system-ui,sans-serif}*{box-sizing:border-box}</style></head><body>' +
-      '<script src="/ad-frame-monitor.js"><\\/script>' +
+      '<script src="/ad-frame-monitor.js"><\/script>' +
       body + '</body></html>';
     return iframe;
   }
@@ -169,7 +169,7 @@
         '<meta name="viewport" content="width=device-width, initial-scale=1">' +
         '<base target="_blank"><style>html,body{margin:0;padding:0;background:transparent;' +
         'font-family:system-ui,sans-serif}*{box-sizing:border-box}</style></head><body>' +
-        '<script src="/ad-frame-monitor.js"><\\/script>' +
+        '<script src="/ad-frame-monitor.js"><\/script>' +
         '<div id="' + unitId + '"></div>' +
         '<script async data-cfasync="false" src="' + scriptSrc + '"><\/script>' +
         '</body></html>';
