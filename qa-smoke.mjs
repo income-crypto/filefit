@@ -93,7 +93,7 @@ for (const file of staticPages.filter(p => p.startsWith('tools/'))) {
 for(const url of ["https://file-fit.pages.dev/","https://file-fit.pages.dev/about","https://file-fit.pages.dev/tools/image-compressor/","https://file-fit.pages.dev/tools/photo-signature-resizer/","https://file-fit.pages.dev/tools/image-converter/","https://file-fit.pages.dev/tools/jpg-to-pdf/","https://file-fit.pages.dev/tools/merge-pdf/","https://file-fit.pages.dev/tools/split-pdf/"]) {
   assert.ok(sitemap.includes('<loc>' + url + '</loc><lastmod>2026-11-09</lastmod>'), 'Updated page lastmod missing: ' + url);
 }
-const jsFiles = ['app.js', 'analytics-consent.js', 'adsterra-native.js'];
+const jsFiles = ['app.js', 'analytics-consent.js', 'adsterra-native.js', 'ad-frame-monitor.js'];
 for (const file of jsFiles) new Function(await read('dist/' + file));
 assert.equal(config.adsterra.websiteApproved, true, 'Adsterra site must be approved');
 assert.equal(config.adsterra.enabled, true, 'Adsterra guide loader should be enabled');
@@ -194,6 +194,12 @@ assert.ok(nativeAds.includes('filefit-social-enable'), 'Social Bar must require 
 assert.ok(nativeAds.includes("slot.dataset.filefitAdSlot === 'hero' ? 'eager' : 'lazy'"), 'Hero native ad must load eagerly');
 assert.ok(nativeAds.includes("iframe.setAttribute('loading', 'eager')"), 'Hero 468x60 banner must load eagerly');
 assert.ok(nativeAds.includes('showSponsoredFallback()'), 'Unrecognized regions must have a labeled sponsored fallback');
+assert.ok(nativeAds.includes('filefitAdFrameStatus'), 'Ad frame failures must collapse empty ad slots');
+assert.ok(nativeAds.includes('ad-frame-monitor.js'), 'Ad frames must observe actual vendor script failures');
+const adFrameMonitor = await read('dist/ad-frame-monitor.js');
+assert.ok(adFrameMonitor.includes("report('failed')"), 'Provider errors must be detected');
+assert.ok(adFrameMonitor.includes("report(hasCreative() ? 'ready' : 'empty')"), 'No-fill ads must not remain blank');
+
 assert.ok(nativeAds.includes("location.pathname === '/index.html'"), 'File processing must be sandboxed on /index.html too');
 assert.ok(!nativeAds.includes("else if (result.adsterraMode === 'opt-in') showPrompt()"), 'Do not put an opt-in prompt in the main hero');
 
